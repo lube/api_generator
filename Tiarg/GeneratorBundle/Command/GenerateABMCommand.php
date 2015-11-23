@@ -209,7 +209,7 @@ EOT
         $BundleBasePath = implode('/',  array_slice(explode('\\', $BundlePath),0,count(explode('\\', $BundlePath)) - 1));
 
         $RenderedController = $this->container->get('templating')->render('@TiargGeneratorBundle/Resources/templates/controller.php.twig', 
-                                                                            array('BundleBasePath' => $BundleBasePath,
+                                                                            array('BundleBasePath' => str_replace('/', '\\', $BundleBasePath),
                                                                                   'EntityPathPuntos' => $EntityPath, 
                                                                                   'EntityPathBarra' => $EntityPathBarra, 
                                                                                   'EntityName' => $EntityName, 
