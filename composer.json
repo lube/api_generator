@@ -25,5 +25,9 @@
 	                   "sensio/framework-extra-bundle": "^3.0.2",
 	    			   "jms/serializer-bundle": "^1.0",
 	    			   "nelmio/api-doc-bundle": "^2.10"
-					}
+					},
+	    "autoload": {
+	        "psr-0": { "Tiarg\\GeneratorBundle": "" }
+	    },
+    	"target-dir": "Tiarg/GeneratorBundle"
 }
