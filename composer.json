@@ -28,6 +28,5 @@
 					},
 	    "autoload": {
 	        "psr-0": { "Tiarg\\GeneratorBundle": "" }
-	    },
-    	"target-dir": "Tiarg/GeneratorBundle"
+	    }
 }
