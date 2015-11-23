@@ -12,6 +12,7 @@
 				        }
 				    ],
         "homepage": "https://github.com/Lube/tiarg_generator",
+        "minimum-stability": "dev",
 	    "require": {
 			           "php": ">=5.3.9",
 					   "symfony/symfony": "2.7.*",
