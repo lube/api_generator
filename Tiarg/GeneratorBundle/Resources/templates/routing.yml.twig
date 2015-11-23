@@ -1,0 +1,17 @@
+{% if 'all' in actions %}
+{{ route_name_prefix }}:
+    path:     /{desde}/a/{hasta}
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:all" }
+{% endif %}
+
+{% if 'get' in actions %}
+{{ route_name_prefix }}_get:
+    path:     /{id}
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:get" }
+{% endif %}
+
+{% if 'update' in actions %}
+{{ route_name_prefix }}_update:
+    path:     /update
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:update" }
+{% endif %}
