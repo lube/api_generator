@@ -20,7 +20,6 @@ use {{ EntityPathBarra }};
 class {{ EntityName }}Controller extends Controller
 {
   /**
-   * @Rest\View
    *
    * @ApiDoc(
    *  description="Devueve una lista de {{ EntityName }}s, la ruta indica los items a devolver"
@@ -36,22 +35,43 @@ class {{ EntityName }}Controller extends Controller
       if (isset($getParameters['limit']) && isset($getParameters['from']) ) 
       {
           ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}')->findBy(null, null, $hasta - $desde, $desde);
-          $jsonContent = $serializer->serialize(${{ EntityName }}s, 'json');
+          $response = $serializer->serialize(${{ EntityName }}s, 'json');
       } 
       else 
       {
           ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}')->findAll();
-          $jsonContent = $serializer->serialize(${{ EntityName }}s, 'json');    
+          $response = $serializer->serialize(${{ EntityName }}s, 'json');    
       }
 
-      return new Response($jsonContent);
+      return new Response($response);
   }
 
   /**
-   * @Rest\View
    *
    * @ApiDoc(
-   *  description="Returns a single {{ EntityName }} matching the id given",
+   *  description="Retorna la cantidad de {{ EntityName }} en la db",
+   * )
+   */
+  public function cantAction()
+  {
+      $em = $this->container->get('doctrine')->getManager();
+      $getParameters = $request->query->all()
+
+      $qb = $entityManager->createQueryBuilder();
+      $qb->select('count(e.id)');
+      $qb->from('{{ EntityPathPuntos }}','e');
+
+      $count = $qb->getQuery()->getSingleScalarResult();
+      $response = $serializer->serialize($count, 'json'); 
+
+      return new Response($response);
+  }
+
+
+  /**
+   *
+   * @ApiDoc(
+   *  description="Retorna una {{ EntityName }} segun la id provista",
    *  requirements={
    *      {
    *          "name"="id",
@@ -70,17 +90,16 @@ class {{ EntityName }}Controller extends Controller
 
     $serializer = SerializerBuilder::create()->build();
 
-    $jsonContent = $serializer->serialize(${{ EntityName }}, 'json');
+    $response = $serializer->serialize(${{ EntityName }}, 'json');
 
-    return new Response(${{ EntityName }});
+    return new Response($response);
   }
 
   {% if RenderUpdate %}
   /**
-   * @Rest\View
    *
    * @ApiDoc(
-   *  description="Update a single {{ EntityName }} matching the id given with the data sent",
+   *  description="Actualiza un {{ EntityName }} de acuerdo a la id provista",
    *  requirements={
    *      {
    *          "name"="id",
@@ -139,9 +158,9 @@ class {{ EntityName }}Controller extends Controller
 
     $serializer = SerializerBuilder::create()->build();
 
-    $jsonContent = $serializer->serialize(${{ EntityName }}, 'json');
+    $$response  = $serializer->serialize(${{ EntityName }}, 'json');
 
-    return new Response($jsonContent);
+    return new Response($response);
   }
   {% endif %}
 }

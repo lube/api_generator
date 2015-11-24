@@ -1,7 +1,13 @@
 {% if 'all' in actions %}
 {{ route_name_prefix }}:
-    path:     /{desde}/a/{hasta}
+    path:     /{desde}/{hasta}
     defaults: { _controller: "{{ bundle }}:{{ entity }}:all" }
+{% endif %}
+
+{% if 'cant' in actions %}
+{{ route_name_prefix }}:
+    path:     /cant
+    defaults: { _controller: "{{ bundle }}:{{ entity }}:cant" }
 {% endif %}
 
 {% if 'get' in actions %}

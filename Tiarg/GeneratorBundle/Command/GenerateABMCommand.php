@@ -206,6 +206,7 @@ EOT
         $errors = array();
         $runner = $questionHelper->getRunner($output, $errors);
 
+        // ------------------------- Acme\BlogBundle\Entity -> Acme/Blog/Bundle/Controller
         $BundleBasePath = implode('/',  array_slice(explode('\\', $BundlePath),0,count(explode('\\', $BundlePath)) - 1));
 
         $RenderedController = $this->container->get('templating')->render('@TiargGeneratorBundle/Resources/templates/controller.php.twig', 
@@ -218,7 +219,6 @@ EOT
                                                                                   'RenderUpdate'   => $withWrite)
                                                                         );
         
-        // -------------------------------------- Acme\BlogBundle\Entity -> Acme/Blog/Bundle/Controller
         $ControllerPath = 'src/' . $BundleBasePath  . '/Controller/';
         
         $output->writeln('Generando el Controller en: ' . $ControllerPath);
@@ -227,7 +227,7 @@ EOT
 
         $this->routePrefix = $prefix;
         $this->routeNamePrefix = str_replace('/', '_', $prefix);
-        $this->actions = $withWrite ? array('get', 'all', 'update') : array('get', 'all');
+        $this->actions = $withWrite ? array('get', 'all', 'update', 'cant') : array('get', 'all', 'cant');
 
         $this->generateConfiguration($BundleBasePath, $EntityName);
 
