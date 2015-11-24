@@ -149,9 +149,9 @@ class {{ EntityName }}Controller extends Controller
     }
 
     {% for field in EntityFields %}
-      {% if field != "id"  %}
-        ${{ EntityName }}->set{{field | capitalize}}($PostParameters['{{field}}']);
-      {% endif %}
+    {% if field != "id"  %}
+    ${{ EntityName }}->set{{field | capitalize}}($PostParameters['{{field}}']);
+    {% endif %}
     {% endfor %}
 
     $em->persist(${{ EntityName }});
@@ -159,7 +159,7 @@ class {{ EntityName }}Controller extends Controller
 
     $serializer = SerializerBuilder::create()->build();
 
-    $$response  = $serializer->serialize(${{ EntityName }}, 'json');
+    $response  = $serializer->serialize(${{ EntityName }}, 'json');
 
     return new Response($response);
   }
