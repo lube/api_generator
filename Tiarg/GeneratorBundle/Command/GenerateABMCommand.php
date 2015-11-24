@@ -218,7 +218,7 @@ EOT
                                                                                   'EntityMetadata' => $EntityMetadata,
                                                                                   'RenderUpdate'   => $withWrite)
                                                                         );
-        
+
         $ControllerPath = 'src/' . $BundleBasePath  . '/Controller/';
         
         $output->writeln('Generando el Controller en: ' . $ControllerPath);
@@ -248,7 +248,7 @@ EOT
             'actions'           => $this->actions,
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
-            'bundle'            => $BundleBasePath,
+            'bundle'            => str_replace('/', '', $BundleBasePath),
             'entity'            => $entity,
         ));
 
