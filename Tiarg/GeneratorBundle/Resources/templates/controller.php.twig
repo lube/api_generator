@@ -25,23 +25,18 @@ class {{ EntityName }}Controller extends Controller
    *  description="Devueve una lista de {{ EntityName }}s, la ruta indica los items a devolver"
    * )
    */
-  public function allAction($desde, $hasta) 
+  public function allAction($offset, $limit, $filter) 
   {
     	$em = $this->container->get('doctrine')->getManager();
-      $getParameters = $request->query->all();
 
       $serializer = SerializerBuilder::create()->build();
 
-      if (isset($getParameters['limit']) && isset($getParameters['from']) ) 
-      {
-          ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}')->findBy(null, null, $hasta - $desde, $desde);
-          $response = $serializer->serialize(${{ EntityName }}s, 'json');
-      } 
-      else 
-      {
-          ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}')->findAll();
-          $response = $serializer->serialize(${{ EntityName }}s, 'json');    
-      }
+      if ($filter)
+        ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}l')->findBy(array("nombre" => $filter), null, $limit, $offset);
+      else
+        ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}')->findBy(array(), null, $limit, $offset);
+
+      $response = $serializer->serialize(${{ EntityName }}s, 'json');
 
       return new Response($response);
   }
@@ -55,11 +50,15 @@ class {{ EntityName }}Controller extends Controller
   public function cantAction()
   {
       $em = $this->container->get('doctrine')->getManager();
-      $getParameters = $request->query->all()
+      $serializer = SerializerBuilder::create()->build();
 
-      $qb = $entityManager->createQueryBuilder();
+      $qb = $em->createQueryBuilder();
       $qb->select('count(e.id)');
       $qb->from('{{ EntityPathPuntos }}','e');
+
+      if ($filter)
+        $qb->andWhere($qb->expr()->like('e.nombre', ':filter'))
+           ->setParameter('filter','%'.$filter.'%');
 
       $count = $qb->getQuery()->getSingleScalarResult();
       $response = $serializer->serialize($count, 'json'); 
@@ -118,7 +117,7 @@ class {{ EntityName }}Controller extends Controller
   public function updateAction(Request $request, $id)
   {
     $em = $this->container->get('doctrine')->getManager();
-    $getParameters = $request->request->all();
+    $PostParameters = json_decode($this->get('request')->getContent(), true);
 
     $fields =  array(
     {% for field in EntityFields %}
@@ -127,7 +126,7 @@ class {{ EntityName }}Controller extends Controller
           );
 
     foreach ($fields as $field) {
-        $checkParametersList[] = isset($getParameters[$field]);
+        $checkParametersList[] = isset($PostParameters[$field]);
     }
 
     if (in_array(FALSE, $checkParametersList)) 
@@ -150,7 +149,9 @@ class {{ EntityName }}Controller extends Controller
     }
 
     {% for field in EntityFields %}
-        ${{ EntityName }}->$set{{field | capitalize}}($getParameters['{{field}}']);;
+      {% if field != "id"  %}
+        ${{ EntityName }}->set{{field | capitalize}}($PostParameters['{{field}}']);
+      {% endif %}
     {% endfor %}
 
     $em->persist(${{ EntityName }});
