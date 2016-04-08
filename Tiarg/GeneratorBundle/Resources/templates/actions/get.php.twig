@@ -1,0 +1,22 @@
+ /** 
+{% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
+{% endif %}
+   * @Route("/{id}", requirements={"id" = "\d+"})
+   * @Method({"GET"})
+   * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
+   * @ApiDoc(
+   *  description="Retorna una {{ Entity['Name'] }} segun la id provista",
+   *  requirements={
+   *      {
+   *          "name"="id",
+   *          "dataType"="integer",
+   *          "requirement"="\d+",
+   *          "description"="Id de la {{ Entity['Name'] }} a retornar"
+   *      }
+   *  }
+   * )
+   */
+  public function getAction(${{ Entity['Name'] | lower }})
+  {
+    return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));
+  }

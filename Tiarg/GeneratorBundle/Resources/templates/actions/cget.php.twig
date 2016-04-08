@@ -1,0 +1,21 @@
+ /** 
+{% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
+{% endif %}
+   * @Route("/")
+   * @Method({"GET"})
+   * @ApiDoc(description="Devueve una lista de {{ Entity['Name'] }}s, la ruta indica los items a devolver")
+   */
+  public function cgetAction(Request $request) 
+  {
+      $offset = $request->request->get('offset',    null);
+      $limit  = $request->request->get('limit',     null);
+      $filter = $request->request->get('filter_by', array());
+      $order  = $request->request->get('order_by',  null);
+
+      ${{ Entity['Name'] }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filter, $order, $limit, $offset);
+
+      $Response['data']   = json_decode($this->serializer->serialize(${{ Entity['Name'] }}s, 'json'));
+      $Response['total']  = count($this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filter));
+
+      return new JsonResponse($Response);
+  }

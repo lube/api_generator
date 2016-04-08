@@ -1,0 +1,105 @@
+ /** 
+{% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
+{% endif %}
+   * @Route("/")
+   * @Method({"POST"})
+   * @ApiDoc(
+   *  description="Genera una {{ Entity['Name'] }}"
+   * )
+   */
+  public function saveAction(Request $request)
+  {
+    return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));
+  }
+
+      /**
+   * @Rest\View
+   *
+   * @ApiDoc(
+   *  description="Update or Create (id === 0) a single {{ EntityName }} matching the id given with the data sent",
+   *   parameters={
+  {% for field in EntityFields %}
+*          {
+*             "name"="{{field}}", 
+*             "dataType"="{{EntityMetadata.getTypeOfField(field)}}", 
+*             "required"=true, 
+*             "description"="{{FieldDescriptions[field]}}"
+*          },
+   {% endfor %}
+*       }
+   * )
+   */
+    public function saveAction(){
+        try{
+            $em = $this->getDoctrine()->getManager();
+            $repository = $em->getRepository("{{ EntityPath }}");
+
+            $postContent = $this->get('request')->getContent();
+            $json_object = json_decode($postContent, true);
+            
+            if(isset($json_object['id'])) {
+              if($json_object['id'] === 0){
+                  //Nueva {{EntityName}}
+                  ${{EntityName | lower}} = New {{EntityName}}();
+              } else {
+                  //Update {{EntityName}}
+                  ${{EntityName | lower}} = $repository->find($json_object['id']);
+              }
+            } else {
+              if ($repository->findby($json_object))
+                ${{EntityName | lower}} = $repository->findby(array(
+                  {% for field in EntityFields %}
+                            '{{field}}' => $json_object['{{field}}'],
+                   {% endfor %}
+                            ));
+              else
+                ${{EntityName | lower}} = New {{EntityName}}();
+            }
+
+            {% for field in EntityFields %}
+                //Cargo los datos en la {{EntityName}}
+                if (isset($json_object['{{field}}']))
+                  {% if EntityMetadata.getTypeOfField(field) == 'date' or EntityMetadata.getTypeOfField(field) == 'datetime' %}
+                    ${{EntityName | lower}}->set{{field|capitalize}}( new \DateTime($json_object['{{field}}']));
+                  {% else %} 
+                    ${{EntityName | lower}}->set{{field|capitalize}}($json_object['{{field}}']);
+                  {% endif %}
+            {% endfor %}
+            
+            $em->persist(${{EntityName | lower}});
+            $em->flush();            
+            
+            $serializer = SerializerBuilder::create()->build();
+            $jsonContent = $serializer->serialize(${{EntityName | lower}}, 'json');
+            return new Response($jsonContent);
+            
+        } catch (Exception $ex) {
+
+        }
+    }
+
+  /**
+   * @Rest\View
+   *
+   * @ApiDoc(
+   *  description="Removes a single {{ EntityName }} matching the id given from the database",
+   * )
+   */
+    public function deleteAction($id){
+        try{
+            $em = $this->getDoctrine()->getManager();
+            $repository = $em->getRepository("{{ EntityPath }}");
+            
+            $recompensa = $repository->find($id);
+            
+            $em->remove($recompensa);
+            $em->flush();
+            
+            $serializer = SerializerBuilder::create()->build();
+            $jsonContent = $serializer->serialize(array('msg' => 'deleted'), 'json');
+            return new Response($jsonContent);
+            
+        } catch (Exception $ex) {
+
+        }
+    }

@@ -1,167 +1,40 @@
 <?php
 
-namespace {{ BundleBasePath }}\Controller;
+namespace {{ Namespace }}\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use JMS\Serializer\SerializerBuilder;
+use JMS\SecurityExtraBundle\Annotation\PreAuthorize;
+use JMS\DiExtraBundle\Annotation\Inject;
+use JMS\Serializer\SerializationContext;
+
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Doctrine\DBAL\DriverManager;
 
-use {{ EntityPathBarra }};
+use {{ Bundle['Name'] }}\Entity\{{ Entity['Name'] }};
 
-
-
-class {{ EntityName }}Controller extends Controller
+/**
+ * @Route("/api/{{ Entity['Name'] | lower }}")
+ */
+class {{ Entity['Name'] }}Controller extends Controller
 {
-  /**
-   *
-   * @ApiDoc(
-   *  description="Devueve una lista de {{ EntityName }}s, la ruta indica los items a devolver"
-   * )
-   */
-  public function allAction($offset, $limit, $filter) 
-  {
-    	$em = $this->container->get('doctrine')->getManager();
+  /** @Inject("em") */
+  private $em;
 
-      $serializer = SerializerBuilder::create()->build();
+  /** @Inject("serializer") */
+  private $serializer;
 
-      if ($filter)
-        ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}l')->findBy(array("nombre" => $filter), null, $limit, $offset);
-      else
-        ${{ EntityName }}s  = $em->getRepository('{{ EntityPathPuntos }}')->findBy(array(), null, $limit, $offset);
+  {% for action in Entity['Actions'] %}
 
-      $response = $serializer->serialize(${{ EntityName }}s, 'json');
+ {% include 'actions/' ~ action ~ '.php.twig' %}
 
-      return new Response($response);
-  }
+  {% endfor %}
 
-  /**
-   *
-   * @ApiDoc(
-   *  description="Retorna la cantidad de {{ EntityName }} en la db",
-   * )
-   */
-  public function cantAction()
-  {
-      $em = $this->container->get('doctrine')->getManager();
-      $serializer = SerializerBuilder::create()->build();
-
-      $qb = $em->createQueryBuilder();
-      $qb->select('count(e.id)');
-      $qb->from('{{ EntityPathPuntos }}','e');
-
-      if ($filter)
-        $qb->andWhere($qb->expr()->like('e.nombre', ':filter'))
-           ->setParameter('filter','%'.$filter.'%');
-
-      $count = $qb->getQuery()->getSingleScalarResult();
-      $response = $serializer->serialize($count, 'json'); 
-
-      return new Response($response);
-  }
-
-
-  /**
-   *
-   * @ApiDoc(
-   *  description="Retorna una {{ EntityName }} segun la id provista",
-   *  requirements={
-   *      {
-   *          "name"="id",
-   *          "dataType"="integer",
-   *          "requirement"="\d+",
-   *          "description"="Id de la {{EntityName}} a retornar"
-   *      }
-   *  }
-   * )
-   */
-  public function getAction($id)
-  {
-    $em = $this->container->get('doctrine')->getManager();
-
-    ${{ EntityName }} = $em->getRepository('{{ EntityPathPuntos }}')->findBy(array('id'=>$id));
-
-    $serializer = SerializerBuilder::create()->build();
-
-    $response = $serializer->serialize(${{ EntityName }}, 'json');
-
-    return new Response($response);
-  }
-
-  {% if RenderUpdate %}
-  /**
-   *
-   * @ApiDoc(
-   *  description="Actualiza un {{ EntityName }} de acuerdo a la id provista",
-   *  requirements={
-   *      {
-   *          "name"="id",
-   *          "dataType"="integer",
-   *          "requirement"="\d+",
-   *          "description"="Id de la {{ EntityName }} a actualizar, si es cero, genera una nueva"
-   *      },
-   * },
-   *   parameters={
-   {% for field in EntityFields %}
-*          {"name"="{{field}}", "dataType"="{{EntityMetadata.getTypeOfField(field)}}", "required"=true},
-   {% endfor %}
-*       }
-   * )
-   */
-  public function updateAction(Request $request, $id)
-  {
-    $em = $this->container->get('doctrine')->getManager();
-    $PostParameters = json_decode($this->get('request')->getContent(), true);
-
-    $fields =  array(
-    {% for field in EntityFields %}
-        '{{field}}',
-    {% endfor %}
-          );
-
-    foreach ($fields as $field) {
-        $checkParametersList[] = isset($PostParameters[$field]);
-    }
-
-    if (in_array(FALSE, $checkParametersList)) 
-    {
-    		return new Response("{\"result\":\"Parametros requeridos para actualizar el {{ EntityName }} no seteados\"}", 400);
-    }
-
-    if ($id == 0)
-    {
-        ${{ EntityName }} = new {{ EntityName }}();
-    }
-    else
-    {
-        ${{ EntityName }} = $em->getRepository('{{ EntityPathPuntos }}')->findOneBy(array('id'=>$id));
-    }
-
-    if (${{ EntityName }} === null) 
-    {
-    		return new Response("{\"result\":\"{{ EntityName }} no encontrado con id " . $id . "\"}", 404);
-    }
-
-    {% for field in EntityFields %}
-    {% if field != "id"  %}
-    ${{ EntityName }}->set{{field | capitalize}}($PostParameters['{{field}}']);
-    {% endif %}
-    {% endfor %}
-
-    $em->persist(${{ EntityName }});
-    $em->flush();
-
-    $serializer = SerializerBuilder::create()->build();
-
-    $response  = $serializer->serialize(${{ EntityName }}, 'json');
-
-    return new Response($response);
-  }
-  {% endif %}
 }
