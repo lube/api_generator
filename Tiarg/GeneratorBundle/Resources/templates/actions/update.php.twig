@@ -5,17 +5,17 @@
    * @Method({"POST"})
    * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Edita una {{ Entity['Name'] }}"
+   *  description="Edita un/a {{ Entity['Name'] }}"
    * )
    */
   public function updateAction(Request $request, ${{ Entity['Name'] | lower }})
   {
-    $contex = new \JMS\Serializer\DeserializationContext();
+    $context = new \JMS\Serializer\DeserializationContext();
     $context->attributes->set('target', ${{ Entity['Name'] | lower }});
 
-    $this->serializer->deserialize($request->request, '{{ $Entity['Metadata'].getName() }}', 'json', $context);
+    ${{ Entity['Name'] | lower }} = $this->serializer->deserialize($request->getContent(), '{{ Entity['Metadata'].getName() }}', 'json', $context);
     
-    $errors = $this->get('validator')->validate($cajero);
+    $errors = $this->get('validator')->validate(${{ Entity['Name'] | lower }});
     if (count($errors) > 0) 
     {
         foreach ($errors->getIterator() as $error) 
@@ -26,7 +26,7 @@
         return new JsonResponse($errorResponse, 400);
     }
 
-    $this->em->persist(${{EntityName | lower}});
+    $this->em->persist(${{ Entity['Name'] | lower}});
     $this->em->flush();
 
     return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));

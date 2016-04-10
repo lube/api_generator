@@ -1,17 +1,17 @@
  /** 
 {% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
 {% endif %}
-   * @Route("/")
+   * @Route(" ")
    * @Method({"POST"})
    * @ApiDoc(
-   *  description="Crea una {{ Entity['Name'] }}"
+   *  description="Crea un/a {{ Entity['Name'] }}"
    * )
    */
   public function saveAction(Request $request)
   {
-    $this->serializer->deserialize($request->request, '{{ $Entity['Metadata'].getName() }}', 'json');
+    ${{ Entity['Name'] | lower }} = $this->serializer->deserialize($request->getContent(), '{{ Entity['Metadata'].getName() }}', 'json');
     
-    $errors = $this->get('validator')->validate($cajero);
+    $errors = $this->get('validator')->validate(${{ Entity['Name'] | lower }});
     if (count($errors) > 0) 
     {
         foreach ($errors->getIterator() as $error) 
@@ -22,7 +22,7 @@
         return new JsonResponse($errorResponse, 400);
     }
 
-    $this->em->persist(${{EntityName | lower}});
+    $this->em->persist(${{ Entity['Name'] | lower}});
     $this->em->flush();
 
     return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));
