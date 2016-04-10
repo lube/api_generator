@@ -27,6 +27,7 @@ class GenerateAPICommand extends GenerateDoctrineCommand
         $this
             ->setDefinition(array(
                 new InputOption('entity'      , '', InputOption::VALUE_REQUIRED, 'La clase de la entidad a la cual le vamos a generar un controller'),
+                new InputOption('destino'      , '', InputOption::VALUE_REQUIRED, 'El bundle donde pensamos generar nuestro controller'),
                 new InputOption('con-update'  , '', InputOption::VALUE_NONE, 'Si debemos generar o no la funcion de update'),
                 new InputOption('con-rol'  , '', InputOption::VALUE_NONE, 'Si debemos definir un rol con acceso a la api'),
                 new InputOption('rol'  , '', InputOption::VALUE_NONE, 'Rol con acceso a la api')
@@ -79,6 +80,16 @@ EOT
 
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
+
+        $question = new Question($questionHelper->getQuestion('En que bundle queres generar esta API?', $input->getOption('destino')), 
+                                 $input->getOption('destino'));
+
+        $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateBundleNamespace'));
+
+        $question->setAutocompleterValues(array($this->getContainer()->getParameter('kernel.bundles')));
+        $entity = $questionHelper->ask($input, $output, $question);
+
+        $input->setOption('destino', $entity);
 
         // write?
         $withWrite = $input->getOption('con-update') ? true : false;
@@ -144,18 +155,17 @@ EOT
         $withWrite = $input->getOption('con-update');
         $withRol   = $input->getOption('con-rol');
         $rol       = $input->getOption('rol');
+        $destino   = $input->getOption('destino');
                 
         $questionHelper->writeSection($output, 'Generacion API');
-       
         $EntityMetadata = $this->getEntityMetadata($BundleName . ':' . $EntityName)[0]; 
 
         $errors = array();
         $runner = $questionHelper->getRunner($output, $errors);
 
-        // ------------------------- Acme\BlogBundle\Entity -> Acme/Blog/Bundle/Controller
         $BundlePath     = $this->getContainer()->get('doctrine')->getAliasNamespace($BundleName);
         $BundleBasePath = implode('/',  array_slice(explode('\\', $BundlePath),0,count(explode('\\', $BundlePath)) - 1));
-        $ControllerPath = 'src/' . $BundleBasePath  . '/Controller/';
+        $ControllerPath = $this->container->get('kernel')->locateResource('@' . $destino . '/Controller');
 
         $Namespace = str_replace('/', '\\', $BundleBasePath);
         $Bundle['Name']     =  $BundleName;
@@ -165,7 +175,7 @@ EOT
         $Entity['Name']     =  $EntityName;
         $Entity['Fields']   =  $EntityMetadata->getFieldNames();
         $Entity['Metadata'] =  $EntityMetadata;
-        $Entity['Actions']  =  $withWrite ? array('cget', 'get', 'save', 'remove', 'edit') : array('cget', 'get');
+        $Entity['Actions']  =  $withWrite ? array('cget', 'get', 'save', 'remove', 'update') : array('cget', 'get');
 
         $this->renderFile('controller.php.twig', 
                            $ControllerPath . $EntityName . 'Controller.php',
@@ -177,11 +187,6 @@ EOT
         $output->writeln('Generando el Controller en: ' . $ControllerPath);
 
         $questionHelper->writeGeneratorSummary($output, $errors);
-    }
-
-    protected function createGenerator($bundle = null)
-    {
-        return new DoctrineCrudGenerator($this->getContainer()->get('filesystem'));
     }
 
     protected function render($template, $parameters)

@@ -1,0 +1,7 @@
+services:
+    jms_serializer.object_constructor:
+        alias: jms_serializer.initialized_object_constructor
+        public: false
+    jms_serializer.initialized_object_constructor:
+         class:        Tiarg\GeneratorBundle\Services\InitializedObjectConstructor
+         arguments:    ["@jms_serializer.doctrine_object_constructor"]

@@ -1,0 +1,17 @@
+ /** 
+{% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
+{% endif %}
+   * @Route("/{id}", requirements={"id" = "\d+"})
+   * @Method({"DELETE"})
+   * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
+   * @ApiDoc(
+   *  description="Destruye una {{ Entity['Name'] }}"
+   * )
+   */
+  public function updateAction(Request $request, ${{ Entity['Name'] | lower }})
+  {
+    $this->em->remove(${{EntityName | lower}});
+    $this->em->flush();
+
+    return new JsonResponse();
+  }

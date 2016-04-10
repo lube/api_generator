@@ -1,15 +1,19 @@
  /** 
 {% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
 {% endif %}
-   * @Route("/")
+   * @Route("/{id}", requirements={"id" = "\d+"})
    * @Method({"POST"})
+   * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Crea una {{ Entity['Name'] }}"
+   *  description="Edita una {{ Entity['Name'] }}"
    * )
    */
-  public function saveAction(Request $request)
+  public function updateAction(Request $request, ${{ Entity['Name'] | lower }})
   {
-    $this->serializer->deserialize($request->request, '{{ $Entity['Metadata'].getName() }}', 'json');
+    $contex = new \JMS\Serializer\DeserializationContext();
+    $context->attributes->set('target', ${{ Entity['Name'] | lower }});
+
+    $this->serializer->deserialize($request->request, '{{ $Entity['Metadata'].getName() }}', 'json', $context);
     
     $errors = $this->get('validator')->validate($cajero);
     if (count($errors) > 0) 
