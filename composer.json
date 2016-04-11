@@ -12,12 +12,6 @@
 				        }
 				    ],
         "homepage": "https://github.com/Lube/tiarg_generator",
-	    "repositories": [
-	        {
-	            "type": "vcs",
-	            "url": "https://github.com/Lube/KnpJsonSchemaBundle.git"
-	        }
-	    ],
 	    "require": {
 			           "php": ">=5.3.9",
 					   "symfony/symfony": "2.8.*",
@@ -30,7 +24,7 @@
 	                   "sensio/framework-extra-bundle": "^3.0.2",
 	    			   "jms/serializer-bundle": "^1.0",
 	    			   "nelmio/api-doc-bundle": "^2.10",
-				       "knplabs/json-schema-bundle": "dev-master as 1.1",
+				       "lube/knp-json-schema-bundle": "1.2",
 	    			   "lube/json-schema-bundle": "0.2.0"
 					},
 	    "autoload": {
