@@ -13,7 +13,7 @@
     "require": {
         "jms/serializer-bundle": "^1.0",
         "nelmio/api-doc-bundle": "^2.10",
-        "lube/knp-json-schema-bundle": "1.2.*",
+        "lube/knp-json-schema-bundle": "@dev",
         "hadesarchitect/json-schema-bundle": "@dev"
     },
     "autoload": {
