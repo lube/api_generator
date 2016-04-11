@@ -10,7 +10,7 @@
 
       $offset = $request->query->get('offset',    null);
       $limit  = $request->query->get('limit',     null);
-      $filter = json_decode($request->query->get('filter_by', '[]'), true);
+      $filter = json_decode($request->query->get('filter_by', '{}'));
       $order  = $request->query->get('order_by',  null);
 
       if (count($filter) > 0)
