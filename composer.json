@@ -20,7 +20,7 @@
         "jms/serializer-bundle": "^1.0",
         "nelmio/api-doc-bundle": "^2.10",
         "lube/knp-json-schema-bundle": "1.2.*",
-        "hadesarchitect/json-schema-bundle": "dev-master@dev"
+        "hadesarchitect/json-schema-bundle": "@dev"
     },
     "autoload": {
         "psr-0": { "Tiarg\\GeneratorBundle": "" }
