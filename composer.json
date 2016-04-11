@@ -30,7 +30,7 @@
 	                   "sensio/framework-extra-bundle": "^3.0.2",
 	    			   "jms/serializer-bundle": "^1.0",
 	    			   "nelmio/api-doc-bundle": "^2.10",
-				       "knplabs/json-schema-bundle": "master",
+				       "knplabs/json-schema-bundle": "dev-master as 1.0.x-dev",
 	    			   "lube/json-schema-bundle": "0.2.0"
 					},
 	    "autoload": {
