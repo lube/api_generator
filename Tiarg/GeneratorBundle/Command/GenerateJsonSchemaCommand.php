@@ -70,6 +70,11 @@ EOT
 
         $BundlePath = implode('/',  array_slice(explode('\\', $BundlePath),0,count(explode('\\', $BundlePath)) - 1));
 
+        if (!$this->container->get('filesystem')->exists($this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema'))
+        {
+            $this->container->get('filesystem')->mkdir($this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema')  
+        }
+
         file_put_contents ( $this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Save/' . $EntityName . 'Schema.json',
                             json_encode($schema->jsonSerialize(), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) );
         file_put_contents ( $this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Filter/' . $EntityName . 'Schema.json',
