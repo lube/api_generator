@@ -16,10 +16,6 @@
 	        {
 	            "type": "vcs",
 	            "url": "https://github.com/Lube/KnpJsonSchemaBundle.git"
-	        },
-	        {
-	            "type": "vcs",
-	            "url": "https://github.com/Lube/JsonSchemaBundle.git"
 	        }
 	    ],
 	    "require": {
@@ -33,7 +29,8 @@
       				   "sensio/distribution-bundle": "~5.0",
 	                   "sensio/framework-extra-bundle": "^3.0.2",
 	    			   "jms/serializer-bundle": "^1.0",
-	    			   "nelmio/api-doc-bundle": "^2.10"
+	    			   "nelmio/api-doc-bundle": "^2.10",
+	    			   "lube/json-schema-bundle": "0.2.0"
 					},
 	    "require-dev": {
 				       "knplabs/json-schema-bundle": "^1.1",
