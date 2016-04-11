@@ -7,10 +7,29 @@
    */
   public function cgetAction(Request $request) 
   {
+
       $offset = $request->query->get('offset',    null);
       $limit  = $request->query->get('limit',     null);
       $filter = json_decode($request->query->get('filter_by', '[]'), true);
       $order  = $request->query->get('order_by',  null);
+
+      if (count($filter) > 0)
+      {
+        $validator = $this->get('hades.json_schema.validator');
+        $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}Schema/Filter/{{ Entity['Name'] }}Schema.json');
+
+        if (!$validator->isValid($filter, $schema)) 
+        {
+            $errors = $validator->getErrors();
+
+            foreach ($errors as $error) 
+            {
+              $errorMessages[] = (string)$error;
+            }
+
+            return new JsonResponse($errorMessages, 400);
+        }
+      }
 
       ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filter, $order, $limit, $offset);
 

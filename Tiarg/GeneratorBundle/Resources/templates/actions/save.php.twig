@@ -9,6 +9,21 @@
    */
   public function saveAction(Request $request)
   {
+    $validator = $this->get('hades.json_schema.validator');
+    $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}Schema/Save/{{ Entity['Name'] }}Schema.json');
+
+    if (!$validator->isValid(json_decode($request->getContent()), $schema); ) 
+    {
+        $errors = $validator->getErrors();
+
+        foreach ($errors as $error) 
+        {
+          $errorMessages[] = (string)$error;
+        }
+
+        return new JsonResponse($errorMessages, 400);
+    }
+
     ${{ Entity['Name'] | lower }} = $this->serializer->deserialize($request->getContent(), '{{ Entity['Metadata'].getName() }}', 'json');
     
     $errors = $this->get('validator')->validate(${{ Entity['Name'] | lower }});

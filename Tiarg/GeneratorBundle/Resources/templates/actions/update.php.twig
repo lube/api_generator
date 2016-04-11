@@ -10,13 +10,10 @@
    */
   public function updateAction(Request $request, ${{ Entity['Name'] | lower }})
   {
-
     $validator = $this->get('hades.json_schema.validator');
-    $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}/Schema/{{ Entity['Name'] }}Schema.json');
+    $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}Schema/Update/{{ Entity['Name'] }}Schema.json');
 
-    $json_request = $validator->isValid(json_decode($request->getContent()), $schema); 
-
-    if (!$json_request) 
+    if (!$validator->isValid(json_decode($request->getContent()), $schema)) 
     {
         $errors = $validator->getErrors();
 
