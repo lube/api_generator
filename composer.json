@@ -1,33 +1,31 @@
 {
-	    "name": "tiarg/generator-bundle",
-	    "description": "Generates REST Api from Doctrine Entities",
-	    "keywords": ["doctrine","rest","crud","abm","json"],
-        "license": "MIT",
-	    "type": "library",
-        "authors": [
-				        {
-				            "name": "Sebastian Luberriaga",
-			                "email": "sebastianlube@gmail.com",
-			                "role": "Developer"
-				        }
-				    ],
-        "homepage": "https://github.com/Lube/tiarg_generator",
-	    "require": {
-			           "php": ">=5.3.9",
-					   "symfony/symfony": "2.8.*",
-					   "doctrine/orm": "^2.4.8",
-					   "doctrine/doctrine-bundle": "~1.4",
-			           "symfony/assetic-bundle": "~2.3",
-		         	   "symfony/swiftmailer-bundle": "~2.3",
-	    			   "symfony/monolog-bundle": "~2.4",
-      				   "sensio/distribution-bundle": "~5.0",
-	                   "sensio/framework-extra-bundle": "^3.0.2",
-	    			   "jms/serializer-bundle": "^1.0",
-	    			   "nelmio/api-doc-bundle": "^2.10",
-				       "lube/knp-json-schema-bundle": "1.2.*",
-	    			   "lube/json-schema-bundle": "0.2.*"
-					},
-	    "autoload": {
-	        "psr-0": { "Tiarg\\GeneratorBundle": "" }
-	    }
+    "name": "tiarg/generator-bundle",
+    "description": "Generates REST Api from Doctrine Entities",
+    "keywords": ["doctrine", "rest", "crud", "abm", "json"],
+    "license": "MIT",
+    "type": "library",
+    "authors": [{
+        "name": "Sebastian Luberriaga",
+        "email": "sebastianlube@gmail.com",
+        "role": "Developer"
+    }],
+    "homepage": "https://github.com/Lube/tiarg_generator",
+    "require": {
+        "php": ">=5.3.9",
+        "symfony/symfony": "2.8.*",
+        "doctrine/orm": "^2.4.8",
+        "doctrine/doctrine-bundle": "~1.4",
+        "symfony/assetic-bundle": "~2.3",
+        "symfony/swiftmailer-bundle": "~2.3",
+        "symfony/monolog-bundle": "~2.4",
+        "sensio/distribution-bundle": "~5.0",
+        "sensio/framework-extra-bundle": "^3.0.2",
+        "jms/serializer-bundle": "^1.0",
+        "nelmio/api-doc-bundle": "^2.10",
+        "lube/knp-json-schema-bundle": "1.2.*",
+        "hadesarchitect/json-schema-bundle": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Tiarg\\GeneratorBundle": "" }
+    }
 }
