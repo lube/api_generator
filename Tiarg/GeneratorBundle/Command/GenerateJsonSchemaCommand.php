@@ -73,6 +73,9 @@ EOT
         if (!$this->container->get('filesystem')->exists($this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema'))
         {
             $this->container->get('filesystem')->mkdir($this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema');
+            $this->container->get('filesystem')->mkdir($this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Save');
+            $this->container->get('filesystem')->mkdir($this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Filter');
+            $this->container->get('filesystem')->mkdir($this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Update');
         }
 
         file_put_contents ( $this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Save/' . $EntityName . 'Schema.json',
