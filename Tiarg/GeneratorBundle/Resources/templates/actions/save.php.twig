@@ -12,7 +12,7 @@
     $validator = $this->get('hades.json_schema.validator');
     $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}Schema/Save/{{ Entity['Name'] }}Schema.json');
 
-    if (!$validator->isValid(json_decode($request->getContent()), $schema); ) 
+    if (!$validator->isValid(json_decode($request->getContent()), $schema)) 
     {
         $errors = $validator->getErrors();
 
