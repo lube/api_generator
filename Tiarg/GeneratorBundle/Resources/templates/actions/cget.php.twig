@@ -9,7 +9,7 @@
   {
       $offset = $request->query->get('offset',    null);
       $limit  = $request->query->get('limit',     null);
-      $filter = json_decode($request->query->get('filter_by', array()), true);
+      $filter = json_decode($request->query->get('filter_by', '[]'), true);
       $order  = $request->query->get('order_by',  null);
 
       ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filter, $order, $limit, $offset);

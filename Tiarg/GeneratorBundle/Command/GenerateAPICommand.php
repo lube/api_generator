@@ -170,10 +170,11 @@ EOT
 
         $BundlePath     = $this->getContainer()->get('doctrine')->getAliasNamespace($BundleName);
         $BundleBasePath = implode('/',  array_slice(explode('\\', $BundlePath),0,count(explode('\\', $BundlePath)) - 1));
-        $ControllerPath = $this->container->get('kernel')->locateResource('@' . $destino);
+        $BundlePath = $this->container->get('kernel')->locateResource('@' . $destino);
 
         $Namespace = str_replace('/', '\\', $BundleBasePath);
         $Bundle['Name']     =  $BundleName;
+        $Bundle['Path']     =  $BundlePath;
         $Entity['Con-Rol']  =  $withRol;
         $Entity['Rol']      =  $rol;
         $Entity['Name']     =  $EntityName;
@@ -182,13 +183,13 @@ EOT
         $Entity['Actions']  =  $withWrite ? array('cget', 'get', 'save', 'remove', 'update') : array('cget', 'get');
 
         $this->renderFile('controller.php.twig', 
-                           $ControllerPath . '/Controller/' . $EntityName . 'Controller.php',
+                           $BundlePath . '/Controller/' . $EntityName . 'Controller.php',
                            array('Namespace' => $Namespace,
                                  'Bundle'    => $Bundle, 
                                  'Entity'    => $Entity)
                          );
         
-        $output->writeln('Generando el Controller en: ' . $ControllerPath);
+        $output->writeln('Generando el Controller en: ' . $BundlePath);
 
         $questionHelper->writeGeneratorSummary($output, $errors);
     }

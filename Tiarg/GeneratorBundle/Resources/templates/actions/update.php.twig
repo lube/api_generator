@@ -10,6 +10,24 @@
    */
   public function updateAction(Request $request, ${{ Entity['Name'] | lower }})
   {
+
+    $validator = $this->get('hades.json_schema.validator');
+    $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}/Schema/{{ Entity['Name'] }}Schema.json');
+
+    $json_request = $validator->isValid(json_decode($request->getContent()), $schema); 
+
+    if (!$json_request) 
+    {
+        $errors = $validator->getErrors();
+
+        foreach ($errors as $error) 
+        {
+          $errorMessages[] = (string)$error;
+        }
+
+        return new JsonResponse($errorMessages, 400);
+    }
+
     $context = new \JMS\Serializer\DeserializationContext();
     $context->attributes->set('target', ${{ Entity['Name'] | lower }});
 
@@ -23,7 +41,7 @@
             $errorMessages[] = $error->getMessage();
         }
 
-        return new JsonResponse($errorResponse, 400);
+        return new JsonResponse($errorMessages, 400);
     }
 
     $this->em->persist(${{ Entity['Name'] | lower}});
