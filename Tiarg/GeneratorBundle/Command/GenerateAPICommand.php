@@ -51,11 +51,7 @@ EOT
 
         // Descripcion
         $io->section('Especificacion');
-        $io->text(sprintf(
-            "Este comando te ayuda a generar una api para tus entidades.\n
-            Primero necesito que me digas la entidad a la cual queres generarle el ABM.\n
-            Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.\n
-            Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>."
+        $io->text(sprintf("Este comando te ayuda a generar una api para tus entidades.\nPrimero necesito que me digas la entidad a la cual queres generarle el ABM.\nPodes darme una entidad que todavia no existe, y te voy a ayudar a generarla.\nTenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>."
         ));
 
         //Entidad
@@ -98,8 +94,7 @@ EOT
                     $input->getOption('entity'));
 
         $io->text(sprintf(
-            "Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.\n
-             Tambien podes pedirle que genere funciones de update."
+            "Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.\nTambien podes pedirle que genere funciones de update."
         ));
 
         //Actions
