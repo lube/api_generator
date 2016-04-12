@@ -15,6 +15,8 @@ use Sensio\Bundle\GeneratorBundle\Command\AutoComplete\EntitiesAutoCompleter;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
 
+use Doctrine\Bundle\DoctrineBundle\Mapping\DisconnectedMetadataFactory;
+
 class GenerateAPICommand extends ContainerAwareCommand
 {
     protected function configure()
@@ -86,13 +88,22 @@ EOT
         else
         {
             $question = new Question('El nombre de bundle donde vamos a generar el controller para esta API:  <info>[AcmeBlogBundle]</info> ', 'AcmeBlogBundle');
-            $bundleValidator = function ($bundleName)
+            
+            $bundles = $this->getContainer()->getParameter('kernel.bundles');
+            
+            $bundleValidator = function ($bundleName) use ($bundles)
                                         {
-                                            return Validators::validateBundleNamespace($bundleName, false);
-                                        };
+                                            Validators::validateBundleNamespace($bundleName, false);
+                                            
+                                            if (!array_key_exists($bundleName, $this->getContainer()->getParameter('kernel.bundles')))
+                                            {
+                                                throw new \RuntimeException('No se puede encontrar el Bundle '. $bundleName . ' en el Sistema.');
+                                            }
+                                            return $bundleName;
+                                        };        
 
             $question->setValidator($bundleValidator);
-            $question->setAutocompleterValues($this->getContainer()->getParameter('kernel.bundles'));
+            $question->setAutocompleterValues($bundles);
 
             $input->setOption('destino', $helper->ask($input, $output, $question));
         }
@@ -179,12 +190,12 @@ EOT
   #      $rol       = $input->getOption('rol');
   #      $destino   = $input->getOption('destino');
                 
-        $EntityMetadata = $this->container()->getEntityMetadata($BundleName . ':' . $EntityName)[0]; 
+        $EntityMetadata = $this->getEntityMetadata($BundleName . ':' . $EntityName)[0]; 
 
         $errors = array();
-        $runner = $helper->getRunner($output, $errors);
+        $runner = $this->getRunner($output, $errors);
 
-        $Namespace = $this->container()->get('doctrine')->getAliasNamespace($BundleName);
+        $Namespace = $this->container->get('doctrine')->getAliasNamespace($BundleName);
 
         /*$BundleBasePath = implode('/',  
                                 array_slice(
@@ -214,7 +225,7 @@ EOT
         
         $io->success('Generando el Controller en: ' . $BundlePath);
 
-        $helper->writeGeneratorSummary($output, $errors);
+        $this->writeGeneratorSummary($output, $errors);
 
         return 0;
     }
@@ -263,5 +274,39 @@ EOT
     {
         $factory = new DisconnectedMetadataFactory($this->getContainer()->get('doctrine'));
         return $factory->getClassMetadata($entity)->getMetadata();
+    }
+
+    public function writeGeneratorSummary(OutputInterface $output, $errors)
+    {
+        if (!$errors) {
+            $this->writeSection($output, 'Everything is OK! Now get to work :).');
+        } else {
+            $this->writeSection($output, array(
+                'The command was not able to configure everything automatically.',
+                'You\'ll need to make the following changes manually.',
+            ), 'error');
+            $output->writeln($errors);
+        }
+    }
+    public function getRunner(OutputInterface $output, &$errors)
+    {
+        $runner = function ($err) use ($output, &$errors) {
+            if ($err) {
+                $output->writeln('<fg=red>FAILED</>');
+                $errors = array_merge($errors, $err);
+            } else {
+                $output->writeln('<info>OK</info>');
+            }
+        };
+        return $runner;
+    }
+    
+    public function writeSection(OutputInterface $output, $text, $style = 'bg=blue;fg=white')
+    {
+        $output->writeln(array(
+            '',
+            $this->getHelperSet()->get('formatter')->formatBlock($text, $style, true),
+            '',
+        ));
     }
 }
