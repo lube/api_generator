@@ -45,7 +45,7 @@ EOT
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Bienvenido al generador de API Tiarg');
+        $io->title('Generador de API Tiarg');
 
         $helper = $this->getHelper('question');
 
