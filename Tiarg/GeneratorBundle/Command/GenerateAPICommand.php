@@ -133,11 +133,11 @@ EOT
             
             if ($helper->ask($input, $output, $question))
             {
-                $question = new Question('El nombre del Rol para esta API', '<info>ROLE_ADMIN</info>');
+                $question = new Question('El nombre del Rol para esta API <info>ROLE_ADMIN</info>', 'ROLE_ADMIN');
                 $input->setOption('rol', $helper->ask($input, $output, $question));
             }
         }
-        
+
         $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
 
         //Resumen
