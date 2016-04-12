@@ -50,15 +50,11 @@ EOT
         $helper = $this->getHelper('question');
 
         // namespace
-        $io->section(array(
-            '',
-            'Este comando te ayuda a generar una api para tus entidades.',
-            '',
-            'Primero necesito que me digas la entidad a la cual queres generarle el ABM.',
-            'Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla',
-            '',
-            'Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>.',
-            '',
+        $io->section(sprintf(
+            "Este comando te ayuda a generar una api para tus entidades.\n
+            Primero necesito que me digas la entidad a la cual queres generarle el ABM.\n
+            Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.\n
+            Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>."
         ));
 
         //Entidad
@@ -100,11 +96,9 @@ EOT
                     $input->getOption('destino'), 
                     $input->getOption('entity'));
 
-        $io->section(array(
-            '',
-            'Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.',
-            'Tambien podes pedirle que genere funciones de update.',
-            '',
+        $io->section(sprintf(
+            "Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.\n
+             Tambien podes pedirle que genere funciones de update."
         ));
 
         //Actions
@@ -138,12 +132,12 @@ EOT
         $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('con-rol'));
 
         //Resumen
-        $io->section(array(
-            '',
-            $this->getHelper('formatter')->formatBlock('Resumen antes de la generacion', 'bg=blue;fg=white', true),
-            '',
+        $io->section(
+            $this->getHelper('formatter')->formatBlock('Resumen antes de la generacion', 'bg=blue;fg=white', true)
+        );
+        $io->section(
             $summary
-        ));
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
