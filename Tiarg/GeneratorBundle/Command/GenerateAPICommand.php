@@ -1,6 +1,5 @@
 <?php
 
-// src/AppBundle/Command/GenerateRestCommand.php
 namespace Tiarg\GeneratorBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -197,12 +196,13 @@ EOT
 
         $Namespace = $this->container->get('doctrine')->getAliasNamespace($BundleName);
 
-        /*$BundleBasePath = implode('/',  
+        $$Namespace = implode('/',  
                                 array_slice(
-                                        explode('\\', $BundlePath)
+                                        explode('\\', $Namespace)
                                         ,0
                                         ,-1
-                                );*/
+                                )
+                            );
 
         $BundlePath = $this->container->get('kernel')->locateResource('@' . $input->getOption('destino'));
 
