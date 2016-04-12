@@ -49,8 +49,9 @@ EOT
 
         $helper = $this->getHelper('question');
 
-        // namespace
-        $io->section(sprintf(
+        // Descripcion
+        $io->section('Especificacion');
+        $io->text(sprintf(
             "Este comando te ayuda a generar una api para tus entidades.\n
             Primero necesito que me digas la entidad a la cual queres generarle el ABM.\n
             Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.\n
@@ -96,7 +97,7 @@ EOT
                     $input->getOption('destino'), 
                     $input->getOption('entity'));
 
-        $io->section(sprintf(
+        $io->text(sprintf(
             "Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.\n
              Tambien podes pedirle que genere funciones de update."
         ));
@@ -135,7 +136,7 @@ EOT
         $io->section(
             $this->getHelper('formatter')->formatBlock('Resumen antes de la generacion', 'bg=blue;fg=white', true)
         );
-        $io->section(
+        $io->text(
             $summary
         );
     }
@@ -150,7 +151,7 @@ EOT
             $question = new ConfirmationQuestion('Confirmas la generacion?', true);
             if (!$helper->ask($input, $output, $question)) 
             {
-                $io->section('<error>Comando abortado</error>');
+                $io->text('<error>Comando abortado</error>');
 
                 return 1;
             }
