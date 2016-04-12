@@ -51,11 +51,16 @@ EOT
 
         // Descripcion
         $io->section('Especificacion');
-        $io->text(sprintf("Este comando te ayuda a generar una api para tus entidades.\n
-            Primero necesito que me digas la entidad a la cual queres generarle el ABM.\n
-            Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.\n
-            Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>."
-        ));
+        $io->text(<<<EOT
+Este comando te ayuda a generar una api para tus entidades.
+
+Primero necesito que me digas la entidad a la cual queres generarle el ABM.
+
+Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.
+
+Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>.
+EOT
+        );
 
         //Entidad
         if ($input->hasArgument('entity') && $input->getArgument('entity') != '') 
@@ -96,10 +101,12 @@ EOT
                     $input->getOption('destino'), 
                     $input->getOption('entity'));
 
-        $io->text(sprintf(
-            "\n<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.\n
-            Tambien podes pedirle que genere funciones de update</info>.\n"
-        ));
+        $io->text(<<<EOT
+<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.
+
+Tambien podes pedirle que genere funciones de update</info>."
+EOT
+        );
 
         //Actions
         if ($input->hasArgument('con-update') && $input->getArgument('con-update') != '') 
@@ -112,6 +119,7 @@ EOT
 
             $input->setOption('con-update', $helper->ask($input, $output, $question));
         }
+
         $summary .= sprintf("\n\nAcciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
 
         //Rol
@@ -129,6 +137,7 @@ EOT
                 $input->setOption('rol', $helper->ask($input, $output, $question));
             }
         }
+        
         $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
 
         //Resumen
@@ -201,6 +210,8 @@ EOT
         $io->success('Generando el Controller en: ' . $BundlePath);
 
         $helper->writeGeneratorSummary($output, $errors);
+
+        return 0;
     }
 
     protected function render($template, $parameters)
