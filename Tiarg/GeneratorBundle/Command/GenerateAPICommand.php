@@ -101,9 +101,9 @@ EOT
                     $input->getOption('entity'));
 
         $io->text(array(
-                '<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.',
+                '<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.</info>',
                 '',
-                'Tambien podes pedirle que genere funciones de update</info>.'
+                '<info>Tambien podes pedirle que genere funciones de update</info>.'
             ));
 
         //Actions
