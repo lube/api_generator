@@ -65,7 +65,7 @@ EOT
         }
         else
         {
-            $question = new Question('El nombre del atajo a la Entidad: ', '<info>AcmeBlogBundle:Blog</info>');
+            $question = new Question('El nombre del atajo a la Entidad: <info>[AcmeBlogBundle]</info> ', 'AcmeBlogBundle:Blog');
             $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
 
             $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
@@ -81,7 +81,7 @@ EOT
         }
         else
         {
-            $question = new Question('El nombre de bundle donde vamos a generar el controller para esta API: ', '<info>AcmeBlogBundle</info>');
+            $question = new Question('El nombre de bundle donde vamos a generar el controller para esta API:  <info>[AcmeBlogBundle]</info> ', 'AcmeBlogBundle');
             $bundleValidator = function ($bundleName)
                                         {
                                             return Validators::validateBundleNamespace($bundleName, false);
@@ -109,20 +109,20 @@ EOT
         }
         else
         {
-            $question = new ConfirmationQuestion('Queres generar las acciones de save, update y remove? ', '<info>yes</info>');
+            $question = new ConfirmationQuestion('Queres generar las acciones de save, update y remove? <info>[yes]</info> ', true);
 
             $input->setOption('con-update', $helper->ask($input, $output, $question));
         }
         $summary .= sprintf("\n\nAcciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
 
         //Rol
-        if ($input->hasArgument('con-rol') && $input->getArgument('con-rol') != '') 
+        if ($input->hasArgument('rol') && $input->getArgument('rol') != '') 
         {
-            $input->setOption('con-rol', $input->getArgument('con-rol'));
+            $input->setOption('rol', $input->getArgument('rol'));
         }
         else
         {
-            $question = new ConfirmationQuestion('Queres especificar un Rol para esta API?', true);
+            $question = new ConfirmationQuestion('Queres especificar un Rol para esta API? <info>[yes]</info> ', true);
             
             if ($helper->ask($input, $output, $question))
             {
@@ -130,7 +130,7 @@ EOT
                 $input->setOption('rol', $helper->ask($input, $output, $question));
             }
         }
-        $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('con-rol'));
+        $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
 
         //Resumen
         $io->section(
