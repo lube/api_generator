@@ -51,16 +51,15 @@ EOT
 
         // Descripcion
         $io->section('Especificacion');
-        $io->text(<<<EOT
-Este comando te ayuda a generar una api para tus entidades.
-
-Primero necesito que me digas la entidad a la cual queres generarle el ABM.
-
-Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.
-
-Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>.
-EOT
-        );
+        $io->text(array(
+                        'Este comando te ayuda a generar una api para tus entidades.',
+                        '',
+                        'Primero necesito que me digas la entidad a la cual queres generarle el ABM.',
+                        '',
+                        'Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.',
+                        '',
+                        'Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>.'
+                ));
 
         //Entidad
         if ($input->hasArgument('entity') && $input->getArgument('entity') != '') 
@@ -69,7 +68,7 @@ EOT
         }
         else
         {
-            $question = new Question('El nombre del atajo a la Entidad: <info>[AcmeBlogBundle]</info> ', 'AcmeBlogBundle:Blog');
+            $question = new Question('El nombre del atajo a la Entidad: <info>[AcmeBlogBundle:Blog]</info> ', 'AcmeBlogBundle:Blog');
             $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
 
             $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
@@ -97,16 +96,15 @@ EOT
             $input->setOption('destino', $helper->ask($input, $output, $question));
         }
 
-        $summary = sprintf("Vas a usar el generador de controllers TIARG para generar tu REST \"<info>%s:%s</info>\"", 
+        $summary[] = sprintf("Vas a usar el generador de controllers TIARG para generar tu REST \"<info>%s:%s</info>\"", 
                     $input->getOption('destino'), 
                     $input->getOption('entity'));
 
-        $io->text(<<<EOT
-<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.
-
-Tambien podes pedirle que genere funciones de update</info>."
-EOT
-        );
+        $io->text(array(
+                '<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.',
+                '',
+                'Tambien podes pedirle que genere funciones de update</info>.'
+            ));
 
         //Actions
         if ($input->hasArgument('con-update') && $input->getArgument('con-update') != '') 
@@ -120,7 +118,7 @@ EOT
             $input->setOption('con-update', $helper->ask($input, $output, $question));
         }
 
-        $summary .= sprintf("\n\nAcciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
+        $summary[] = sprintf("\n\nAcciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
 
         //Rol
         if ($input->hasArgument('rol') && $input->getArgument('rol') != '') 
@@ -133,12 +131,12 @@ EOT
             
             if ($helper->ask($input, $output, $question))
             {
-                $question = new Question('El nombre del Rol para esta API <info>ROLE_ADMIN</info>', 'ROLE_ADMIN');
+                $question = new Question('El nombre del Rol para esta API <info>ROLE_ADMIN</info> ', 'ROLE_ADMIN');
                 $input->setOption('rol', $helper->ask($input, $output, $question));
             }
         }
 
-        $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
+        $summary[] = sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
 
         //Resumen
         $io->text(
@@ -151,12 +149,13 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $this->container = $this->getApplication()->getKernel()->getContainer();
         $helper = $this->getHelper('question');
 
         if ($input->isInteractive()) 
         {
-            $question = new ConfirmationQuestion('Confirmas la generacion?', true);
+            $question = new ConfirmationQuestion('Confirmas la generacion? <info> [yes] </info> ', true);
             if (!$helper->ask($input, $output, $question)) 
             {
                 $io->text('<error>Comando abortado</error>');
