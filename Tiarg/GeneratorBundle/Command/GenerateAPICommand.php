@@ -139,8 +139,8 @@ EOT
         $summary[] = sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
 
         //Resumen
-        $io->text(
-            $this->getHelper('formatter')->formatBlock("\nResumen antes de la generacion\n", 'bg=blue;fg=white', true)
+        $io->section(
+            "Resumen antes de la generacion"
         );
         $io->text(
             $summary
@@ -158,8 +158,6 @@ EOT
             $question = new ConfirmationQuestion('Confirmas la generacion? <info> [yes] </info> ', true);
             if (!$helper->ask($input, $output, $question)) 
             {
-                $io->text('<error>Comando abortado</error>');
-
                 return 1;
             }
         }
