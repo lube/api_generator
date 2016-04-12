@@ -156,7 +156,7 @@ EOT
             }
         }
 
-        list($BundleName, $EntityName) = $this->parseShortcutNotation($entity);
+        list($BundleName, $EntityName) = $this->parseShortcutNotation($input->getOption('entity'));
         
         $io->section('Generando el Controller: <info>OK</info>');
 
