@@ -112,7 +112,7 @@ EOT
         {
             $question = new Question('El nombre del Rol para esta API', ($input->hasArgument('rol') ? $input->getArgument('rol') : 'ROLE_ADMIN'));
             $input->setOption('rol', $helper->ask($input, $output, $question));
-            $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('con-rol'))
+            $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('con-rol'));
         }
 
         $output->writeln(array(
@@ -192,7 +192,7 @@ EOT
 
         return $twig->render($template, $parameters);
     }
-    
+
     /**
      * Get the twig environment that will render skeletons.
      *
