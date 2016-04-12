@@ -58,7 +58,8 @@ EOT
                         '',
                         'Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.',
                         '',
-                        'Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>.'
+                        'Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>.',
+                        '',
                 ));
 
         //Entidad
@@ -99,11 +100,14 @@ EOT
         $summary[] = sprintf("Vas a usar el generador de controllers TIARG para generar tu REST \"<info>%s:%s</info>\"", 
                     $input->getOption('destino'), 
                     $input->getOption('entity'));
+        $summary[] = '';
 
         $io->text(array(
+                '',
                 '<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.</info>',
                 '',
-                '<info>Tambien podes pedirle que genere funciones de update</info>.'
+                '<info>Tambien podes pedirle que genere funciones de update</info>.',
+                ''
             ));
 
         //Actions
@@ -118,12 +122,15 @@ EOT
             $input->setOption('con-update', $helper->ask($input, $output, $question));
         }
 
-        $summary[] = sprintf("\n\nAcciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
+        $summary[] = sprintf("Acciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
+        $summary[] = '';
 
         //Rol
         if ($input->hasArgument('rol') && $input->getArgument('rol') != '') 
         {
             $input->setOption('rol', $input->getArgument('rol'));
+            $summary[] = sprintf ("ROL: \"<info>%s</info>\"", $input->getOption('rol'));
+            $summary[] = '';
         }
         else
         {
@@ -133,10 +140,11 @@ EOT
             {
                 $question = new Question('El nombre del Rol para esta API <info>ROLE_ADMIN</info> ', 'ROLE_ADMIN');
                 $input->setOption('rol', $helper->ask($input, $output, $question));
+
+                $summary[] = sprintf ("ROL: \"<info>%s</info>\"", $input->getOption('rol'));
+                $summary[] = '';
             }
         }
-
-        $summary[] = sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
 
         //Resumen
         $io->section(
@@ -155,7 +163,7 @@ EOT
 
         if ($input->isInteractive()) 
         {
-            $question = new ConfirmationQuestion('Confirmas la generacion? <info> [yes] </info> ', true);
+            $question = new ConfirmationQuestion('Confirmas la generacion? <info>[yes]</info> ', true);
             if (!$helper->ask($input, $output, $question)) 
             {
                 return 1;
@@ -171,12 +179,12 @@ EOT
   #      $rol       = $input->getOption('rol');
   #      $destino   = $input->getOption('destino');
                 
-        $EntityMetadata = $this->getEntityMetadata($BundleName . ':' . $EntityName)[0]; 
+        $EntityMetadata = $this->container()->getEntityMetadata($BundleName . ':' . $EntityName)[0]; 
 
         $errors = array();
         $runner = $helper->getRunner($output, $errors);
 
-        $Namespace = $this->getContainer()->get('doctrine')->getAliasNamespace($BundleName);
+        $Namespace = $this->container()->get('doctrine')->getAliasNamespace($BundleName);
 
         /*$BundleBasePath = implode('/',  
                                 array_slice(
@@ -249,5 +257,11 @@ EOT
             throw new \InvalidArgumentException(sprintf('The controller name must contain a : ("%s" given, expecting something like AcmeBlogBundle:Post)', $entity));
         }
         return array(substr($entity, 0, $pos), substr($entity, $pos + 1));
+    }
+    
+    protected function getEntityMetadata($entity)
+    {
+        $factory = new DisconnectedMetadataFactory($this->getContainer()->get('doctrine'));
+        return $factory->getClassMetadata($entity)->getMetadata();
     }
 }
