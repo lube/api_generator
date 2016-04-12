@@ -28,7 +28,6 @@ class GenerateAPICommand extends ContainerAwareCommand
                 new InputOption('entity'     , '', InputOption::VALUE_REQUIRED, 'La clase de la entidad a la cual le vamos a generar un controller'),
                 new InputOption('destino'    , '', InputOption::VALUE_REQUIRED, 'El bundle donde pensamos generar nuestro controller'),
                 new InputOption('con-update' , '', InputOption::VALUE_NONE, 'Si debemos generar o no la funcion de update'),
-                new InputOption('con-rol'    , '', InputOption::VALUE_NONE, 'Si debemos limitar el acceso a un rol'),
                 new InputOption('rol'        , '', InputOption::VALUE_NONE, 'Rol con acceso a la api')
             ))
             ->setHelp(<<<EOT
@@ -49,12 +48,13 @@ EOT
 
     protected function interact(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+        $io->title('Bienvenido al generador de API Tiarg');
+
         $helper = $this->getHelper('question');
 
-        $output->writeln('Bienvenido al generador de controller Tiarg');
-
         // namespace
-        $output->writeln(array(
+        $io->section(array(
             '',
             'Este comando te ayuda a generar una api para tus entidades.',
             '',
@@ -65,57 +65,84 @@ EOT
             '',
         ));
 
+        //Entidad
         if ($input->hasArgument('entity') && $input->getArgument('entity') != '') 
         {
             $input->setOption('entity', $input->getArgument('entity'));
         }
+        else
+        {
+            $question = new Question('El nombre del atajo a la Entidad: ', '<info>AcmeBlogBundle:Blog</info>');
+            $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
 
-        $question = new Question('El nombre del atajo a la Entidad', ($input->hasArgument('entity') ? $input->getArgument('entity') : 'AcmeBlogBundle:Blog'));
-        $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
+            $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
+            $question->setAutocompleterValues($autocompleter->getSuggestions());
 
-        $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
-        $autocompleteEntities = $autocompleter->getSuggestions();
-        $question->setAutocompleterValues($autocompleteEntities);
+            $input->setOption('entity',  $helper->ask($input, $output, $question));
+        }
 
-        $input->setOption('entity',  $helper->ask($input, $output, $question));
+        //Destino
+        if ($input->hasArgument('destino') && $input->getArgument('destino') != '') 
+        {
+            $input->setOption('destino', $input->getArgument('destino'));
+        }
+        else
+        {
+            $question = new Question('El nombre de bundle donde vamos a generar el controller para esta API: ', '<info>AcmeBlogBundle</info>');
+            $bundleValidator = function ($bundleName)
+                                        {
+                                            return Validators::validateBundleNamespace($bundleName, false);
+                                        };
 
-        $question = new Question('En que bundle queres generar esta API?', ($input->hasArgument('destino') ? $input->getArgument('destino') : 'AcmeBlogBundle'));
-        $bundleValidator = function ($bundleName)
-                                    {
-                                        return Validators::validateBundleNamespace($bundleName, false);
-                                    };
+            $question->setValidator($bundleValidator);
+            $question->setAutocompleterValues($this->getContainer()->getParameter('kernel.bundles'));
 
-        $question->setValidator($bundleValidator);
-        $question->setAutocompleterValues($this->getContainer()->getParameter('kernel.bundles'));
+            $input->setOption('destino', $helper->ask($input, $output, $question));
+        }
 
-        $input->setOption('destino', $helper->ask($input, $output, $question));
-        $summary = sprintf("\n\nVas a usar el generador de controllers TIARG para generar tu REST \"<info>%s:%s</info>\"", 
+        $summary = sprintf("Vas a usar el generador de controllers TIARG para generar tu REST \"<info>%s:%s</info>\"", 
                     $input->getOption('destino'), 
                     $input->getOption('entity'));
 
-        $output->writeln(array(
+        $io->section(array(
             '',
             'Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.',
             'Tambien podes pedirle que genere funciones de update.',
             '',
         ));
-        $question = new ConfirmationQuestion('Queres generar las acciones de save, update y remove?', $input->hasArgument('con-update'));
 
-        $input->setOption('con-update', $helper->ask($input, $output, $question));
+        //Actions
+        if ($input->hasArgument('con-update') && $input->getArgument('con-update') != '') 
+        {
+            $input->setOption('con-update', $input->getArgument('con-update'));
+        }
+        else
+        {
+            $question = new ConfirmationQuestion('Queres generar las acciones de save, update y remove? ', '<info>yes</info>');
+
+            $input->setOption('con-update', $helper->ask($input, $output, $question));
+        }
         $summary .= sprintf("\n\nAcciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
 
-        $question = new ConfirmationQuestion('Queres especificar un Rol para esta API?', true);
-        
-        $input->setOption('con-rol', $helper->ask($input, $output, $question));
-
-        if ($input->getOption('con-rol'))
+        //Rol
+        if ($input->hasArgument('con-rol') && $input->getArgument('con-rol') != '') 
         {
-            $question = new Question('El nombre del Rol para esta API', ($input->hasArgument('rol') ? $input->getArgument('rol') : 'ROLE_ADMIN'));
-            $input->setOption('rol', $helper->ask($input, $output, $question));
-            $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('con-rol'));
+            $input->setOption('con-rol', $input->getArgument('con-rol'));
         }
+        else
+        {
+            $question = new ConfirmationQuestion('Queres especificar un Rol para esta API?', true);
+            
+            if ($helper->ask($input, $output, $question))
+            {
+                $question = new Question('El nombre del Rol para esta API', '<info>ROLE_ADMIN</info>');
+                $input->setOption('rol', $helper->ask($input, $output, $question));
+            }
+        }
+        $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('con-rol'));
 
-        $output->writeln(array(
+        //Resumen
+        $io->section(array(
             '',
             $this->getHelper('formatter')->formatBlock('Resumen antes de la generacion', 'bg=blue;fg=white', true),
             '',
@@ -133,7 +160,7 @@ EOT
             $question = new ConfirmationQuestion('Confirmas la generacion?', true);
             if (!$helper->ask($input, $output, $question)) 
             {
-                $output->writeln('<error>Comando abortado</error>');
+                $io->section('<error>Comando abortado</error>');
 
                 return 1;
             }
@@ -141,7 +168,7 @@ EOT
 
         list($BundleName, $EntityName) = $this->parseShortcutNotation($entity);
         
-        $output->writeln('Generando el Controller: <info>OK</info>');
+        $io->section('Generando el Controller: <info>OK</info>');
 
    #     $withWrite = $input->getOption('con-update');
    #     $withRol   = $input->getOption('con-rol');
@@ -181,7 +208,7 @@ EOT
                                  'Entity'    => $Entity)
                          );
         
-        $output->writeln('Generando el Controller en: ' . $BundlePath);
+        $io->success('Generando el Controller en: ' . $BundlePath);
 
         $helper->writeGeneratorSummary($output, $errors);
     }
@@ -215,5 +242,14 @@ EOT
         }
 
         return file_put_contents($target, $this->render($template, $parameters));
+    }
+
+    private function parseShortcutNotation($shortcut)
+    {
+        $entity = str_replace('/', '\\', $shortcut);
+        if (false === $pos = strpos($entity, ':')) {
+            throw new \InvalidArgumentException(sprintf('The controller name must contain a : ("%s" given, expecting something like AcmeBlogBundle:Post)', $entity));
+        }
+        return array(substr($entity, 0, $pos), substr($entity, $pos + 1));
     }
 }
