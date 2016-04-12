@@ -51,7 +51,7 @@ EOT
     {
         $helper = $this->getHelper('question');
 
-        $output->writeln($output, 'Bienvenido al generador de controller Tiarg');
+        $output->writeln('Bienvenido al generador de controller Tiarg');
 
         // namespace
         $output->writeln(array(
