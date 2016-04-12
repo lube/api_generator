@@ -141,8 +141,8 @@ EOT
         $summary .= sprintf ("\n\nROL: \"<info>%s</info>\"", $input->getOption('rol'));
 
         //Resumen
-        $io->section(
-            $this->getHelper('formatter')->formatBlock('Resumen antes de la generacion', 'bg=blue;fg=white', true)
+        $io->text(
+            $this->getHelper('formatter')->formatBlock("\nResumen antes de la generacion\n", 'bg=blue;fg=white', true)
         );
         $io->text(
             $summary
