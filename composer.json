@@ -1,7 +1,7 @@
 {
     "name": "tiarg/generator-bundle",
     "description": "Generates REST Api from Doctrine Entities",
-    "keywords": ["doctrine", "rest", "crud", "abm", "json"],
+    "keywords": ["doctrine", "rest", "crud", "abm", "json", "api"],
     "license": "MIT",
     "type": "library",
     "authors": [{
