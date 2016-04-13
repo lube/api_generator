@@ -12,7 +12,7 @@
       $limit  = $request->query->get('limit',     null);
       $filterSchema = json_decode($request->query->get('filter_by', '{}'));
       $filterArray = json_decode($request->query->get('filter_by', '{}'), true);
-      $order  = $request->query->get('order_by',  null);
+      $orderArray = json_decode($request->query->get('order_by', '{}'), true);
 
       if (count($filterArray) > 0)
       {
@@ -32,7 +32,7 @@
         }
       }
 
-      ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy((array)$filterArray, $order, $limit, $offset);
+      ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filterArray, $orderArray, $limit, $offset);
 
       $Response['data']   = json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}s, 'json'));
       $Response['total']  = count($this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filterArray));
