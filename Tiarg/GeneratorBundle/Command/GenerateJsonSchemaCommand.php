@@ -17,7 +17,6 @@ use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
-use Knp\JsonSchemaBundle\Schema\SchemaGenerator;
 use Doctrine\Bundle\DoctrineBundle\Mapping\DisconnectedMetadataFactory;
 
 class GenerateJsonSchemaCommand extends ContainerAwareCommand
@@ -76,7 +75,7 @@ EOT
         }
 
         $BundlePath = $this->container->get('doctrine')->getAliasNamespace($BundleName);
-        $schema = $this->container->get('json_schema.generator')->generate($BundlePath . '\\' . $EntityName, SchemaGenerator::LOOSE);
+        $schema = $this->container->get('json_schema.generator')->generate($BundlePath . '\\' . $EntityName);
 
         $BundlePath = implode('/',  array_slice(explode('\\', $BundlePath),0,count(explode('\\', $BundlePath)) - 1));
 
