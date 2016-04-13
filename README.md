@@ -61,7 +61,7 @@ Credits
 
 The design is heavily inspired by the Doctrine CRUD Generator.
 
-This bundle relies on [JMSSerializer](https://github.com/schmittjoh/JMSSerializerBundle), [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle), [JsonSchemaBundle](https://github.com/HadesArchitect/JsonSchemaBundle).
+This bundle relies on [JMSSerializer](https://github.com/schmittjoh/JMSSerializerBundle), [JMSDiExtraBundle](https://github.com/schmittjoh/JMSDiExtraBundle), [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle), [JsonSchemaBundle](https://github.com/HadesArchitect/JsonSchemaBundle).
 
 
 License

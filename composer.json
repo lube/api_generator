@@ -12,6 +12,7 @@
     "homepage": "https://github.com/Lube/tiarg_generator",
     "require": {
         "jms/serializer-bundle": "^1.0",
+        "jms/di-extra-bundle": "^1.0",
         "nelmio/api-doc-bundle": "^2.10",
         "lube/knp-json-schema-bundle": "1.2.*",
         "hadesarchitect/json-schema-bundle": "@dev"
