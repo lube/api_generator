@@ -1,5 +1,5 @@
  /** 
-{% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
+{% if Entity['Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
 {% endif %}
    * @Route("/{id}", requirements={"id" = "\d+"})
    * @Method({"GET"})

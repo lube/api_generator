@@ -1,5 +1,6 @@
 <?php
 
+// src/AppBundle/Command/GenerateRestCommand.php
 namespace Tiarg\GeneratorBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -196,7 +197,7 @@ EOT
 
         $Namespace = $this->container->get('doctrine')->getAliasNamespace($BundleName);
 
-        $$Namespace = implode('/',  
+        $Namespace = implode('/',  
                                 array_slice(
                                         explode('\\', $Namespace)
                                         ,0
@@ -209,10 +210,8 @@ EOT
         $Namespace          =  str_replace('/', '\\', $Namespace);
         $Bundle['Name']     =  $BundleName;
         $Bundle['Path']     =  $BundlePath;
-        $Entity['Con-Rol']  =  $input->getOption('rol') ? true : false;
         $Entity['Rol']      =  $input->getOption('rol');
         $Entity['Name']     =  $EntityName;
-        $Entity['Fields']   =  $EntityMetadata->getFieldNames();
         $Entity['Metadata'] =  $EntityMetadata;
         $Entity['Actions']  =  $input->getOption('con-update') ? array('cget', 'get', 'save', 'remove', 'update') : array('cget', 'get');
 
@@ -300,7 +299,7 @@ EOT
         };
         return $runner;
     }
-    
+
     public function writeSection(OutputInterface $output, $text, $style = 'bg=blue;fg=white')
     {
         $output->writeln(array(

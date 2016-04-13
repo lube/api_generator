@@ -5,3 +5,6 @@ services:
     jms_serializer.initialized_object_constructor:
         class:        Tiarg\GeneratorBundle\Services\InitializedObjectConstructor
         arguments:    ["@jms_serializer.doctrine_object_constructor"]
+    tiarg_generator.association_immutabilizer:
+        class:        Tiarg\GeneratorBundle\Services\ImmutableAssociationService
+        arguments:    ["@doctrine.orm.default_entity_manager"]

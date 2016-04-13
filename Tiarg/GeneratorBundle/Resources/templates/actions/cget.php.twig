@@ -1,5 +1,5 @@
  /** 
-{% if Entity['Con-Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
+{% if Entity['Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
 {% endif %}
    * @Route("")
    * @Method({"GET"})
@@ -10,15 +10,16 @@
 
       $offset = $request->query->get('offset',    null);
       $limit  = $request->query->get('limit',     null);
-      $filter = json_decode($request->query->get('filter_by', '{}'));
+      $filterSchema = json_decode($request->query->get('filter_by', '{}'));
+      $filterArray = json_decode($request->query->get('filter_by', '{}'), true);
       $order  = $request->query->get('order_by',  null);
 
-      if (count($filter) > 0)
+      if (count($filterArray) > 0)
       {
         $validator = $this->get('hades.json_schema.validator');
         $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}Schema/Filter/{{ Entity['Name'] }}Schema.json');
 
-        if (!$validator->isValid($filter, $schema)) 
+        if (!$validator->isValid($filterSchema, $schema)) 
         {
             $errors = $validator->getErrors();
 
@@ -31,10 +32,10 @@
         }
       }
 
-      ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filter, $order, $limit, $offset);
+      ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy((array)$filterArray, $order, $limit, $offset);
 
       $Response['data']   = json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}s, 'json'));
-      $Response['total']  = count($this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filter));
+      $Response['total']  = count($this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filterArray));
 
       return new JsonResponse($Response);
   }

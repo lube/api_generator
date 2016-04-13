@@ -14,13 +14,13 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Sensio\Bundle\GeneratorBundle\Command\AutoComplete\EntitiesAutoCompleter;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
-use Sensio\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator;
-use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
 use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
-use Sensio\Bundle\GeneratorBundle\Command\GenerateDoctrineCommand;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
+use Knp\JsonSchemaBundle\Schema\SchemaGenerator;
+use Doctrine\Bundle\DoctrineBundle\Mapping\DisconnectedMetadataFactory;
 
-class GenerateJsonSchemaCommand extends GenerateDoctrineCommand
+class GenerateJsonSchemaCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
@@ -38,20 +38,25 @@ EOT
 
     protected function interact(InputInterface $input, OutputInterface $output)
     {
-        $questionHelper = $this->getQuestionHelper();
+        $io = new SymfonyStyle($input, $output);
+        $io->title('Generador de JSON Schemas Tiarg');
+
+        $questionHelper = $this->getHelper('question');
 
         if ($input->hasArgument('entity') && $input->getArgument('entity') != '') 
         {
             $input->setOption('entity', $input->getArgument('entity'));
         }
+        else
+        {
+            $question = new Question('El nombre del atajo a la Entidad <info>[AppBundle:Blog]</info> ', 'AppBundle:Blog');
+            $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
 
-        $question = new Question($questionHelper->getQuestion('El nombre del atajo a la Entidad', $input->getOption('entity')), $input->getOption('entity'));
-        $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
-
-        $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
-        $autocompleteEntities = $autocompleter->getSuggestions();
-        $question->setAutocompleterValues($autocompleteEntities);
-        $entity = $questionHelper->ask($input, $output, $question);
+            $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
+            $autocompleteEntities = $autocompleter->getSuggestions();
+            $question->setAutocompleterValues($autocompleteEntities);
+            $entity = $questionHelper->ask($input, $output, $question);
+        }
 
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
@@ -59,14 +64,19 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+
         $this->container = $this->getApplication()->getKernel()->getContainer();
 
-        $entity = Validators::validateEntityName($input->getOption('entity'));
-        list($BundleName, $EntityName) = $this->parseShortcutNotation($entity);
+        list($BundleName, $EntityName) = $this->parseShortcutNotation($input->getOption('entity'));
 
-        $BundlePath = $this->getContainer()->get('doctrine')->getAliasNamespace($BundleName);
-        $schema = $this->container->get('json_schema.registry')->register($EntityName, $BundlePath . '\\'. $EntityName);
-        $schema = $this->container->get('json_schema.generator')->generate($EntityName);
+        foreach ($this->container->get('doctrine')->getManager()->getMetadataFactory()->getAllMetadata() as $m) 
+        {
+            $schema = $this->container->get('json_schema.registry')->register($m->getName(), $m->getName());
+        }
+
+        $BundlePath = $this->container->get('doctrine')->getAliasNamespace($BundleName);
+        $schema = $this->container->get('json_schema.generator')->generate($BundlePath . '\\' . $EntityName, SchemaGenerator::LOOSE);
 
         $BundlePath = implode('/',  array_slice(explode('\\', $BundlePath),0,count(explode('\\', $BundlePath)) - 1));
 
@@ -85,11 +95,15 @@ EOT
         file_put_contents ( $this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Update/' . $EntityName . 'Schema.json',
                             json_encode($schema->jsonSerialize(), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) );
 
+        $io->success("Json Schema correctamente generado!");
     }
 
-    protected function createGenerator()
+    private function parseShortcutNotation($shortcut)
     {
-        return null;
+        $entity = str_replace('/', '\\', $shortcut);
+        if (false === $pos = strpos($entity, ':')) {
+            throw new \InvalidArgumentException(sprintf('The controller name must contain a : ("%s" given, expecting something like AcmeBlogBundle:Post)', $entity));
+        }
+        return array(substr($entity, 0, $pos), substr($entity, $pos + 1));
     }
-
 }
