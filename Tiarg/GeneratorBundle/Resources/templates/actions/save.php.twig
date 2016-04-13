@@ -36,6 +36,7 @@
 
         return new JsonResponse($errorResponse, 400);
     }
+    $this->get('tiarg_generator.association_immutabilizer')->markAssociationsReadOnly(${{ Entity['Name'] | lower}});
 
     $this->em->persist(${{ Entity['Name'] | lower}});
     $this->em->flush();

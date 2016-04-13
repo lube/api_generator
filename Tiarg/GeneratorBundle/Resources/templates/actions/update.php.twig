@@ -41,7 +41,9 @@
         return new JsonResponse($errorMessages, 400);
     }
 
-    $this->em->persist(${{ Entity['Name'] | lower}});
+    $this->get('tiarg_generator.association_immutabilizer')->markAssociationsReadOnly(${{ Entity['Name'] | lower}});
+
+    $this->em->merge(${{ Entity['Name'] | lower}});
     $this->em->flush();
 
     return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));
