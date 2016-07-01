@@ -17,7 +17,7 @@
       if (count($filterArray) > 0)
       {
         $validator = $this->get('hades.json_schema.validator');
-        $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}Schema/Filter/{{ Entity['Name'] }}Schema.json');
+        $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://../Schema/Filter/{{ Entity['Name'] }}Schema.json');
 
         if (!$validator->isValid($filterSchema, $schema)) 
         {
