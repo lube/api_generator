@@ -1,12 +1,12 @@
-TiargGeneratorBundle
+ApiGeneratorBundle
 ====================
 **WARNING! Bundle now in development, not for use in production environment!**
 
-[![Latest Stable Version](https://poser.pugx.org/tiarg/generator-bundle/v/stable)](https://packagist.org/packages/tiarg/generator-bundle)
-[![Total Downloads](https://poser.pugx.org/tiarg/generator-bundle/downloads)](https://packagist.org/packages/tiarg/generator-bundle)
-[![License](https://poser.pugx.org/tiarg/generator-bundle/license)](https://packagist.org/packages/tiarg/generator-bundle)
+[![Latest Stable Version](https://poser.pugx.org/lube/api-generator-bundle/v/stable)](https://packagist.org/packages/lube/api-generator-bundle)
+[![Total Downloads](https://poser.pugx.org/lube/api-generator-bundle/downloads)](https://packagist.org/packages/lube/api-generator-bundle)
+[![License](https://poser.pugx.org/lube/api-generator-bundle/license)](https://packagist.org/packages/lube/api-generator-bundle)
 
-The **TiargGeneratorBundle** bundle allows you to generate JSON CRUD APIs for your doctrine entities, with json schemas derived from Doctrine Metadata, Annotations and the Symfony Validator component.
+The **ApiGeneratorBundle** bundle allows you to generate JSON CRUD APIs for your doctrine entities, with json schemas derived from Doctrine Metadata, Annotations and the Symfony Validator component.
 
 Documentation
 -------------
@@ -15,7 +15,7 @@ For documentation, see:
 
     Resources/doc/
 
-[Read the documentation](https://github.com/Lube/tiarg_generator/blob/master/Resources/doc/index.rst)
+[Read the documentation](https://github.com/Lube/api_generator/blob/master/Resources/doc/index.rst)
 
 Installation
 ------------
@@ -52,7 +52,7 @@ Contributing
 ------------
 
 See
-[CONTRIBUTING](https://github.com/Lube/tiarg_generator/blob/master/CONTRIBUTING.md)
+[CONTRIBUTING](https://github.com/Lube/api_generator/blob/master/CONTRIBUTING.md)
 file.
 
 
