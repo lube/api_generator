@@ -10,7 +10,9 @@
   public function saveAction(Request $request)
   {
     $validator = $this->get('hades.json_schema.validator');
-    $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://{{ Bundle['Path'] }}Schema/Save/{{ Entity['Name'] }}Schema.json');
+
+    $schema = $this->get('kernel')->locateResource('@{{ Bundle['Name'] }}/Schema/Save/{{ Entity['Name'] }}Schema.json');
+    $schema = $this->get('hades.json_schema.uri_retriever')->retrieve('file://'. $schema);
 
     if (!$validator->isValid(json_decode($request->getContent()), $schema)) 
     {
