@@ -1,5 +1,5 @@
 {
-    "name": "tiarg/generator-bundle",
+    "name": "lube/generator-bundle",
     "description": "Generates REST Api from Doctrine Entities",
     "keywords": ["doctrine", "rest", "crud", "abm", "json", "api"],
     "license": "MIT",
@@ -9,7 +9,7 @@
         "email": "sebastianlube@gmail.com",
         "role": "Developer"
     }],
-    "homepage": "https://github.com/Lube/tiarg_generator",
+    "homepage": "https://github.com/Lube/api_generator",
     "require": {
         "jms/serializer-bundle": "^1.0",
         "jms/di-extra-bundle": "^1.0",
@@ -18,6 +18,6 @@
         "hadesarchitect/json-schema-bundle": "@dev"
     },
     "autoload": {
-        "psr-0": { "Tiarg\\GeneratorBundle": "" }
+        "psr-0": { "Lube\\GeneratorBundle": "" }
     }
 }
