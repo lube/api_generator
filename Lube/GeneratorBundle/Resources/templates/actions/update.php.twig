@@ -43,7 +43,7 @@
         return new JsonResponse($errorMessages, 400);
     }
 
-    $this->get('api_generator.association_immutabilizer')->markAssociationsReadOnly(${{ Entity['Name'] | lower}});
+    $this->get('lube_generator.association_immutabilizer')->markAssociationsReadOnly(${{ Entity['Name'] | lower}});
 
     $this->em->merge(${{ Entity['Name'] | lower}});
     $this->em->flush();
