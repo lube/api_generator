@@ -5,13 +5,13 @@
    * @Method({"GET"})
    * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Retorna un/a {{ Entity['Name'] }} segun la id provista",
+   *  description="Returns a {{ Entity['Name'] }}",
    *  requirements={
    *      {
    *          "name"="id",
    *          "dataType"="integer",
    *          "requirement"="\d+",
-   *          "description"="Id de la {{ Entity['Name'] }} a retornar"
+   *          "description"="Id of the {{ Entity['Name'] }}"
    *      }
    *  }
    * )
