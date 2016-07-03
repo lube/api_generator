@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiarg\GeneratorBundle\Services;
+namespace Lube\GeneratorBundle\Services;
 
 use JMS\Serializer\Metadata\ClassMetadata;
 use Doctrine\Common\Util\Inflector as Inflector;

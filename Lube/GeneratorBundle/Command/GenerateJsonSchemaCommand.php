@@ -1,7 +1,7 @@
 <?php
 
 // src/AppBundle/Command/GenerateRestCommand.php
-namespace Tiarg\GeneratorBundle\Command;
+namespace Lube\GeneratorBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,20 +25,20 @@ class GenerateJsonSchemaCommand extends ContainerAwareCommand
     {
         $this
             ->setDefinition(array(
-                new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'La clase de la entidad a la cual le vamos a generar un json schema.')
+                new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'Entity target for Schema Generation.')
             ))
             ->setHelp(<<<EOT
-Este comando <info>api:generate:json</info> command genera un json schema para validar las request a una api de esta entidad.
+This command <info>api:generate:json</info> generates a JSON Schema to validate incoming JSON API requests.
 EOT
             )         
             ->setName('api:generate:json')
-            ->setDescription('Generar json schema para una interfaz REST de nuestra API');
+            ->setDescription('Generates JSON Schemas for our REST API');
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Generador de JSON Schemas Tiarg');
+        $io->title('JSON Schema Generator');
 
         $questionHelper = $this->getHelper('question');
 
@@ -48,7 +48,7 @@ EOT
         }
         else
         {
-            $question = new Question('El nombre del atajo a la Entidad <info>[AppBundle:Blog]</info> ', 'AppBundle:Blog');
+            $question = new Question('Entity shortcut name <info>[AppBundle:Blog]</info> ', 'AppBundle:Blog');
             $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
 
             $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
@@ -94,7 +94,7 @@ EOT
         file_put_contents ( $this->container->get('kernel')->getRootDir() . '/../src/' . $BundlePath . '/Schema/Update/' . $EntityName . 'Schema.json',
                             json_encode($schema->jsonSerialize(), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) );
 
-        $io->success("Json Schema correctamente generado!");
+        $io->success("Json Schema correctly generated!");
     }
 
     private function parseShortcutNotation($shortcut)

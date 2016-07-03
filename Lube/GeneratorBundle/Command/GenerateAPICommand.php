@@ -1,7 +1,7 @@
 <?php
 
 // src/AppBundle/Command/GenerateRestCommand.php
-namespace Tiarg\GeneratorBundle\Command;
+namespace Lube\GeneratorBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,44 +23,40 @@ class GenerateAPICommand extends ContainerAwareCommand
     {
         $this
             ->setDefinition(array(
-                new InputOption('entity'     , '', InputOption::VALUE_REQUIRED, 'La clase de la entidad a la cual le vamos a generar un controller'),
-                new InputOption('destino'    , '', InputOption::VALUE_REQUIRED, 'El bundle donde pensamos generar nuestro controller'),
-                new InputOption('con-update' , '', InputOption::VALUE_NONE, 'Si debemos generar o no la funcion de update'),
-                new InputOption('rol'        , '', InputOption::VALUE_NONE, 'Rol con acceso a la api')
+                new InputOption('entity'     , '', InputOption::VALUE_REQUIRED, 'Target class for API Generation'),
+                new InputOption('bundle'    , '', InputOption::VALUE_REQUIRED, 'Target bundle For API Controller'),
+                new InputOption('with-update' , '', InputOption::VALUE_NONE, 'Should we add POST/PUT Operations'),
+                new InputOption('role'        , '', InputOption::VALUE_NONE, 'API ROLE ACCESS')
             ))
             ->setHelp(<<<EOT
-Este comando <info>api:generate</info> command genera una ABM basado en una entidad de Doctrine.
+This command <info>api:generate</info> creates basic CRUD operations and RESTfull endpoints for your model.
 
-Este comando por default solo genera las rutas para listar todos e individualmente las entidades.
+Using --with-update allows the creation for update/remove operations.
 
-Usando la opcion --con-update permite generar las operaciones de update/remove.
-
-<info>php app/console api:generate --entity=AcmeBlogBundle:Post --destino=AcmeBlogBundle --con-update --rol="ROLE_ADMIN"</info>
-
-Cada uno de los archivos generados se genera desde un template, mira el codigo si deseas extender esta funcionalidad.
+<info>php app/console api:generate --entity=AcmeBlogBundle:Post --bundle=AcmeBlogBundle --with-update --role="ROLE_ADMIN"</info>
 EOT
             )         
             ->setName('api:generate')
-            ->setDescription('Generar routing y controllers para una interfaz REST');
+            ->setDescription('Generation of RESTfull endpoint and basic CRUD API');
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Generador de API Tiarg');
+        $io->title('API Generator');
 
         $helper = $this->getHelper('question');
 
         // Descripcion
-        $io->section('Especificacion');
+        $io->section('Specification');
         $io->text(array(
-                        'Este comando te ayuda a generar una api para tus entidades.',
+                        'This command creates basic CRUD operations and RESTfull endpoints for your model.',
                         '',
-                        'Primero necesito que me digas la entidad a la cual queres generarle el ABM.',
+                        'First we are going to need the target entity.',
                         '',
-                        'Podes darme una entidad que todavia no existe, y te voy a ayudar a generarla.',
+                        'If you specify an inexistent API I will help you create it.',
                         '',
-                        'Tenes que usar la notacion de Symfony de la siguiente manera <comment>AcmeBlogBundle:Post</comment>.',
+                        'For example <comment>AcmeBlogBundle:Post</comment>.',
                         '',
                 ));
 
@@ -71,7 +67,7 @@ EOT
         }
         else
         {
-            $question = new Question('El nombre del atajo a la Entidad: <info>[AcmeBlogBundle:Blog]</info> ', 'AcmeBlogBundle:Blog');
+            $question = new Question('The shortcut name for the Entity: <info>[AcmeBlogBundle:Blog]</info> ', 'AcmeBlogBundle:Blog');
             $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
 
             $autocompleter = new EntitiesAutoCompleter($this->getContainer()->get('doctrine')->getManager());
@@ -80,14 +76,14 @@ EOT
             $input->setOption('entity',  $helper->ask($input, $output, $question));
         }
 
-        //Destino
-        if ($input->hasArgument('destino') && $input->getArgument('destino') != '') 
+        //Target Bundle
+        if ($input->hasArgument('bundle') && $input->getArgument('bundle') != '') 
         {
-            $input->setOption('destino', $input->getArgument('destino'));
+            $input->setOption('bundle', $input->getArgument('bundle'));
         }
         else
         {
-            $question = new Question('El nombre de bundle donde vamos a generar el controller para esta API:  <info>[AcmeBlogBundle]</info> ', 'AcmeBlogBundle');
+            $question = new Question('Target bundle For API Controller:  <info>[AcmeBlogBundle]</info> ', 'AcmeBlogBundle');
             
             $bundles = $this->getContainer()->getParameter('kernel.bundles');
             
@@ -97,7 +93,7 @@ EOT
                                             
                                             if (!array_key_exists($bundleName, $this->getContainer()->getParameter('kernel.bundles')))
                                             {
-                                                throw new \RuntimeException('No se puede encontrar el Bundle '. $bundleName . ' en el Sistema.');
+                                                throw new \RuntimeException('Cannot find Bundle '. $bundleName );
                                             }
                                             return $bundleName;
                                         };        
@@ -105,61 +101,61 @@ EOT
             $question->setValidator($bundleValidator);
             $question->setAutocompleterValues($bundles);
 
-            $input->setOption('destino', $helper->ask($input, $output, $question));
+            $input->setOption('bundle', $helper->ask($input, $output, $question));
         }
 
-        $summary[] = sprintf("Vas a usar el generador de controllers TIARG para generar tu REST \"<info>%s:%s</info>\"", 
-                    $input->getOption('destino'), 
+        $summary[] = sprintf("You are going to use the generator to create an API endpoint at \"<info>%s:%s</info>\"", 
+                    $input->getOption('bundle'), 
                     $input->getOption('entity'));
         $summary[] = '';
 
         $io->text(array(
                 '',
-                '<info>Por default, el generador crea solo dos acciones, GET /blog y GET /blog/{id} para listar entidades.</info>',
+                '<info>By default the generator only creates two endpoints, GET /blog y GET /blog/{id}.</info>',
                 '',
-                '<info>Tambien podes pedirle que genere funciones de update</info>.',
+                '<info>You can also specify the creation of PUT/POST operations</info>.',
                 ''
             ));
 
         //Actions
-        if ($input->hasArgument('con-update') && $input->getArgument('con-update') != '') 
+        if ($input->hasArgument('with-update') && $input->getArgument('with-update') != '') 
         {
-            $input->setOption('con-update', $input->getArgument('con-update'));
+            $input->setOption('with-update', $input->getArgument('with-update'));
         }
         else
         {
-            $question = new ConfirmationQuestion('Queres generar las acciones de save, update y remove? <info>[yes]</info> ', true);
+            $question = new ConfirmationQuestion('Do you wish to generate POST/PUT/DELETE operations? <info>[yes]</info> ', true);
 
-            $input->setOption('con-update', $helper->ask($input, $output, $question));
+            $input->setOption('with-update', $helper->ask($input, $output, $question));
         }
 
-        $summary[] = sprintf("Acciones: %s", ($input->getOption('con-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
+        $summary[] = sprintf("Actions: %s", ($input->getOption('with-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
         $summary[] = '';
 
         //Rol
-        if ($input->hasArgument('rol') && $input->getArgument('rol') != '') 
+        if ($input->hasArgument('role') && $input->getArgument('role') != '') 
         {
-            $input->setOption('rol', $input->getArgument('rol'));
-            $summary[] = sprintf ("ROL: \"<info>%s</info>\"", $input->getOption('rol'));
+            $input->setOption('role', $input->getArgument('role'));
+            $summary[] = sprintf ("ROL: \"<info>%s</info>\"", $input->getOption('role'));
             $summary[] = '';
         }
         else
         {
-            $question = new ConfirmationQuestion('Queres especificar un Rol para esta API? <info>[yes]</info> ', true);
+            $question = new ConfirmationQuestion('Do you want to specify a ROLE that can access this API? <info>[yes]</info> ', true);
             
             if ($helper->ask($input, $output, $question))
             {
-                $question = new Question('El nombre del Rol para esta API <info>ROLE_ADMIN</info> ', 'ROLE_ADMIN');
-                $input->setOption('rol', $helper->ask($input, $output, $question));
+                $question = new Question('ROLE\'s name <info>ROLE_ADMIN</info> ', 'ROLE_ADMIN');
+                $input->setOption('role', $helper->ask($input, $output, $question));
 
-                $summary[] = sprintf ("ROL: \"<info>%s</info>\"", $input->getOption('rol'));
+                $summary[] = sprintf ("ROL: \"<info>%s</info>\"", $input->getOption('role'));
                 $summary[] = '';
             }
         }
 
         //Resumen
         $io->section(
-            "Resumen antes de la generacion"
+            "Summary"
         );
         $io->text(
             $summary
@@ -174,7 +170,7 @@ EOT
 
         if ($input->isInteractive()) 
         {
-            $question = new ConfirmationQuestion('Confirmas la generacion? <info>[yes]</info> ', true);
+            $question = new ConfirmationQuestion('Confirm API Generation? <info>[yes]</info> ', true);
             if (!$helper->ask($input, $output, $question)) 
             {
                 return 1;
@@ -183,13 +179,8 @@ EOT
 
         list($BundleName, $EntityName) = $this->parseShortcutNotation($input->getOption('entity'));
         
-        $io->section('Generando el Controller: <info>OK</info>');
+        $io->section('Generating the controller: <info>OK</info>');
 
-   #     $withWrite = $input->getOption('con-update');
-   #     $withRol   = $input->getOption('con-rol');
-  #      $rol       = $input->getOption('rol');
-  #      $destino   = $input->getOption('destino');
-                
         $EntityMetadata = $this->getEntityMetadata($BundleName . ':' . $EntityName)[0]; 
 
         $errors = array();
@@ -205,15 +196,15 @@ EOT
                                 )
                             );
 
-        $BundlePath = $this->container->get('kernel')->locateResource('@' . $input->getOption('destino'));
+        $BundlePath = $this->container->get('kernel')->locateResource('@' . $input->getOption('bundle'));
 
         $Namespace          =  str_replace('/', '\\', $Namespace);
         $Bundle['Name']     =  $BundleName;
         $Bundle['Path']     =  $BundlePath;
-        $Entity['Rol']      =  $input->getOption('rol');
+        $Entity['Rol']      =  $input->getOption('role');
         $Entity['Name']     =  $EntityName;
         $Entity['Metadata'] =  $EntityMetadata;
-        $Entity['Actions']  =  $input->getOption('con-update') ? array('cget', 'get', 'save', 'remove', 'update') : array('cget', 'get');
+        $Entity['Actions']  =  $input->getOption('with-update') ? array('cget', 'get', 'save', 'remove', 'update') : array('cget', 'get');
 
         $this->renderFile('controller.php.twig', 
                            $BundlePath . '/Controller/' . $EntityName . 'Controller.php',
@@ -243,7 +234,7 @@ EOT
      */
     protected function getTwigEnvironment()
     {
-        return new \Twig_Environment(new \Twig_Loader_Filesystem($this->container->get('kernel')->locateResource('@TiargGeneratorBundle/Resources/') . 'templates'), array(
+        return new \Twig_Environment(new \Twig_Loader_Filesystem($this->container->get('kernel')->locateResource('@LubeGeneratorBundle/Resources/') . 'templates'), array(
             'debug' => true,
             'cache' => false,
             'strict_variables' => true,
@@ -254,7 +245,7 @@ EOT
     protected function renderFile($template, $target, $parameters)
     {
         if (!is_dir(dirname($target))) {
-            mkdir(dirname($target), 0777, true);
+            mkdir(dirname($target), 0755, true);
         }
 
         return file_put_contents($target, $this->render($template, $parameters));

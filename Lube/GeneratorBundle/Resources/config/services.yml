@@ -3,8 +3,8 @@ services:
         alias: jms_serializer.initialized_object_constructor
         public: false
     jms_serializer.initialized_object_constructor:
-        class:        Tiarg\GeneratorBundle\Services\InitializedObjectConstructor
+        class:        Lube\GeneratorBundle\Services\InitializedObjectConstructor
         arguments:    ["@jms_serializer.doctrine_object_constructor"]
-    tiarg_generator.association_immutabilizer:
-        class:        Tiarg\GeneratorBundle\Services\ImmutableAssociationService
+    lube_generator.association_immutabilizer:
+        class:        Lube\GeneratorBundle\Services\ImmutableAssociationService
         arguments:    ["@doctrine.orm.default_entity_manager"]

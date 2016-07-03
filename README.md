@@ -24,7 +24,7 @@ Install through composer:
 
 *First step: require bundle*
 ```
-composer require tiarg/generator-bundle
+composer require lube/api-generator-bundle
 ```
 
 *Second step: enable bundle*
@@ -36,7 +36,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Tiarg\GeneratorBundle\TiargGeneratorBundle(),
+        new Lube\GeneratorBundle\LubeGeneratorBundle(),
     );
 }
 ```

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Tiarg\GeneratorBundle\Services;
+namespace Lube\GeneratorBundle\Services;
 
 use JMS\Serializer\VisitorInterface;
 use JMS\Serializer\Metadata\ClassMetadata;
