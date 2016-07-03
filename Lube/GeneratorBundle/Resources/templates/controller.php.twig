@@ -25,10 +25,10 @@ use {{ Bundle['Name'] }}\Entity\{{ Entity['Name'] }};
  */
 class {{ Entity['Name'] }}Controller extends Controller
 {
-  /** @Inject("em") */
+  /** @Inject("doctrine.orm.entity_manager") */
   private $em;
 
-  /** @Inject("serializer") */
+  /** @Inject("jms_serializer") */
   private $serializer;
 
   {% for action in Entity['Actions'] %}
