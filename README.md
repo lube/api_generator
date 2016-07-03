@@ -36,6 +36,14 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
+        new JMS\AopBundle\JMSAopBundle(),
+        new JMS\SerializerBundle\JMSSerializerBundle(),
+        new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+
+        new Knp\JsonSchemaBundle\KnpJsonSchemaBundle(),
+        new HadesArchitect\JsonSchemaBundle\JsonSchemaBundle(),
+
+        new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
         new Lube\GeneratorBundle\LubeGeneratorBundle(),
     );
 }
