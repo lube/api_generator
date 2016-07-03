@@ -1,5 +1,5 @@
 {
-    "name": "lube/generator-bundle",
+    "name": "lube/api-generator-bundle",
     "description": "Generates REST Api from Doctrine Entities",
     "keywords": ["doctrine", "rest", "crud", "abm", "json", "api"],
     "license": "MIT",
