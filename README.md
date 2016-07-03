@@ -56,6 +56,8 @@ $ app/console api:generate:json
 $ app/console api:generate
 ```
 
+API endpoints are now available, check the generated controllers and test the endpoints!
+
 
 Contributing
 ------------
