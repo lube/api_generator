@@ -245,7 +245,7 @@ EOT
     protected function renderFile($template, $target, $parameters)
     {
         if (!is_dir(dirname($target))) {
-            mkdir(dirname($target), 0755, true);
+            mkdir(dirname($target), 0777, true);
         }
 
         return file_put_contents($target, $this->render($template, $parameters));
