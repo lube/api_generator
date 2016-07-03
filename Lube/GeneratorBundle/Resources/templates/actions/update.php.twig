@@ -5,7 +5,7 @@
    * @Method({"POST"})
    * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Edita un/a {{ Entity['Name'] }}"
+   *  description="Updates a {{ Entity['Name'] }}"
    * )
    */
   public function updateAction(Request $request, ${{ Entity['Name'] | lower }})
@@ -43,7 +43,7 @@
         return new JsonResponse($errorMessages, 400);
     }
 
-    $this->get('tiarg_generator.association_immutabilizer')->markAssociationsReadOnly(${{ Entity['Name'] | lower}});
+    $this->get('api_generator.association_immutabilizer')->markAssociationsReadOnly(${{ Entity['Name'] | lower}});
 
     $this->em->merge(${{ Entity['Name'] | lower}});
     $this->em->flush();
