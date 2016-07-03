@@ -5,7 +5,7 @@
    * @Method({"DELETE"})
    * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Destruye un/a {{ Entity['Name'] }}"
+   *  description="Deletes a {{ Entity['Name'] }}"
    * )
    */
   public function removeAction(Request $request, ${{ Entity['Name'] | lower }})
