@@ -36,7 +36,7 @@
             $errorMessages[] = $error->getMessage();
         }
 
-        return new JsonResponse($errorResponse, 400);
+        return new JsonResponse($errorMessages, 400);
     }
     $this->get('lube_generator.association_immutabilizer')->markAssociationsReadOnly(${{ Entity['Name'] | lower}});
 
