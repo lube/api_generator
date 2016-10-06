@@ -208,7 +208,7 @@ EOT
 
         $this->renderFile('controller.php.twig', 
                            $BundlePath . '/Controller/' . $EntityName . 'Controller.php',
-                           array('Namespace' => $Namespace,
+                           array('Namespace' => $input->getOption('bundle'),
                                  'Bundle'    => $Bundle, 
                                  'Entity'    => $Entity)
                          );
