@@ -32,8 +32,11 @@ class ImmutableAssociationService
             if ($metadata->isSingleValuedAssociation($association))
             {
                 $getter = Inflector::camelize('get_' . $association);
-
-                $this->em->getUnitOfWork()->markReadOnly($entity->$getter());
+                $associated = $entity->getter();
+                
+                if ($associated) {
+                    $this->em->getUnitOfWork()->markReadOnly($associated);
+                }
             }
         }
     }
