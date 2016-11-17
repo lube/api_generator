@@ -3,7 +3,20 @@
 {% endif %}
    * @Route("")
    * @Method({"GET"})
-   * @ApiDoc(description="Returns a collection of {{ Entity['Name'] }}")
+   * @ApiDoc(description="Devuelve una lista de {{ Entity['Name'] }} filtrada/ordenada",
+   *  section="{{ Entity['Name'] }}",
+   *  resource=true,
+   *  parameters={
+   *      {"name"="filter_by", "dataType"="json", "required"=false, "description"="Filtros para listar {{ Entity['Name'] }}s"},
+   *      {"name"="order_by",  "dataType"="json", "required"=false, "description"="Filtros para ordenar {{ Entity['Name'] }}s"},
+   *  parameters={
+   *      {"name"="offset", "dataType"="integer", "required"=false, "description"="Offset para paginacion"},
+   *      {"name"="limit", "dataType"="integer", "required"=false, "description"="Limit para paginacion"},
+   *  },
+   *  tags={
+   *    "a revisar: Dev" = "#5bc0de"
+   *  }
+   * )
    */
   public function cgetAction(Request $request) 
   {
@@ -27,7 +40,7 @@
 
             foreach ($errors as $error) 
             {
-              $errorMessages[] = (string)$error;
+              $errorMessages[$error->getProperty()] = $error->getViolation();
             }
 
             return new JsonResponse($errorMessages, 400);
@@ -36,7 +49,7 @@
 
       ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filterArray, $orderArray, $limit, $offset);
 
-      $Response['data']   = json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}s, 'json'));
+      $Response['data']   = $this->utils->serializeByGroup(${{ Entity['Name'] | lower }}s, ['basic'], false);
       $Response['total']  = count($this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy($filterArray));
 
       return new JsonResponse($Response);

@@ -5,7 +5,12 @@
    * @Method({"DELETE"})
    * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Deletes a {{ Entity['Name'] }}"
+   *  description="Remueve un {{ Entity['Name'] }}"
+   *  section="{{ Entity['Name'] }}",
+   *  resource=true,
+   *  tags={
+   *    "a revisar: Dev" = "#5bc0de"
+   *  }
    * )
    */
   public function removeAction(Request $request, ${{ Entity['Name'] | lower }})

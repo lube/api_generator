@@ -26,14 +26,16 @@ class GenerateAPICommand extends ContainerAwareCommand
                 new InputOption('entity'     , '', InputOption::VALUE_REQUIRED, 'Target class for API Generation'),
                 new InputOption('bundle'    , '', InputOption::VALUE_REQUIRED, 'Target bundle For API Controller'),
                 new InputOption('with-update' , '', InputOption::VALUE_NONE, 'Should we add POST/PUT Operations'),
+                new InputOption('with-simple-cget' , '', InputOption::VALUE_NONE, 'Should we replace cGet operation for a simpler one (no filters)'),
                 new InputOption('role'        , '', InputOption::VALUE_NONE, 'API ROLE ACCESS')
             ))
             ->setHelp(<<<EOT
 This command <info>api:generate</info> creates basic CRUD operations and RESTfull endpoints for your model.
 
 Using --with-update allows the creation for update/remove operations.
+Using --with-simple-cget replaces the cget operation for a simpler one (no filters, order).
 
-<info>php app/console api:generate --entity=AcmeBlogBundle:Post --bundle=AcmeBlogBundle --with-update --role="ROLE_ADMIN"</info>
+<info>php app/console api:generate --entity=AcmeBlogBundle:Post --bundle=AcmeBlogBundle --with-update --role="ROLE_ADMIN" --with-simple-cget</info>
 EOT
             )         
             ->setName('api:generate')
@@ -118,7 +120,18 @@ EOT
             ));
 
         //Actions
-        if ($input->hasArgument('with-update') && $input->getArgument('with-update') != '') 
+        if ($input->hasArgument('with-simple-cget')) 
+        {
+            $input->setOption('with-simple-cget', $input->getArgument('with-simple-cget'));
+        }
+        else
+        {
+            $question = new ConfirmationQuestion('Do you wish your cGet action to have filters and order? <info>[yes]</info> ', true);
+
+            $input->setOption('with-simple-cget', $helper->ask($input, $output, $question));
+        }        
+
+        if ($input->hasArgument('with-update')) 
         {
             $input->setOption('with-update', $input->getArgument('with-update'));
         }
@@ -204,7 +217,19 @@ EOT
         $Entity['Rol']      =  $input->getOption('role');
         $Entity['Name']     =  $EntityName;
         $Entity['Metadata'] =  $EntityMetadata;
-        $Entity['Actions']  =  $input->getOption('with-update') ? array('cget', 'get', 'save', 'remove', 'update') : array('cget', 'get');
+
+        if ($input->getOption('with-update')) {
+            array_push($Entity['Actions'], 'save', 'remove', 'update');
+        }
+
+        if ($input->getOption('with-simple-cget')) {
+            array_push($Entity['Actions'], 'cget_simple');
+        } else {
+            array_push($Entity['Actions'], 'cget');
+        }
+
+        array_push($Entity['Actions'], 'get');
+       
 
         $this->renderFile('controller.php.twig', 
                            $BundlePath . '/Controller/' . $EntityName . 'Controller.php',

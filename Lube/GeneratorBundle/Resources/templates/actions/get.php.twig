@@ -5,18 +5,23 @@
    * @Method({"GET"})
    * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Returns a {{ Entity['Name'] }}",
+   *  description="Retorna un {{ Entity['Name'] }}",
+   *  resource=true,
+   *  section="{{ Entity['Name'] }}",
+   *  tags={
+   *    "a revisar: Dev" = "#5bc0de"
+   *  },
    *  requirements={
    *      {
    *          "name"="id",
    *          "dataType"="integer",
    *          "requirement"="\d+",
-   *          "description"="Id of the {{ Entity['Name'] }}"
+   *          "description"="Id del {{ Entity['Name'] }}"
    *      }
    *  }
    * )
    */
   public function getAction(${{ Entity['Name'] | lower }})
   {
-    return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));
+    return new JsonResponse($this->utils->serializeByGroup(${{ Entity['Name'] | lower }}, ['detailed'], false));
   }

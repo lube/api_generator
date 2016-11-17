@@ -31,6 +31,9 @@ class {{ Entity['Name'] }}Controller extends Controller
   /** @Inject("jms_serializer") */
   private $serializer;
 
+  /** @Inject("tiarg.utils") */
+  private $utils;
+  
   {% for action in Entity['Actions'] %}
 
  {% include 'actions/' ~ action ~ '.php.twig' %}

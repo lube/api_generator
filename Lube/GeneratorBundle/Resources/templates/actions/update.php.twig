@@ -5,7 +5,12 @@
    * @Method({"POST"})
    * @ParamConverter("{{ Entity['Name'] | lower }}", class="{{ Bundle['Name'] }}:{{ Entity['Name'] }}")
    * @ApiDoc(
-   *  description="Updates a {{ Entity['Name'] }}"
+   *  description="Actualiza un {{ Entity['Name'] }}"
+   *  section="{{ Entity['Name'] }}",
+   *  resource=true,
+   *  tags={
+   *    "a revisar: Dev" = "#5bc0de"
+   *  }
    * )
    */
   public function updateAction(Request $request, ${{ Entity['Name'] | lower }})
@@ -37,7 +42,7 @@
     {
         foreach ($errors->getIterator() as $error) 
         {
-            $errorMessages[] = $error->getMessage();
+            $errorMessages[$error->getProperty()] = $error->getViolation();
         }
 
         return new JsonResponse($errorMessages, 400);
@@ -48,5 +53,5 @@
     $this->em->merge(${{ Entity['Name'] | lower}});
     $this->em->flush();
 
-    return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));
+    return new JsonResponse($this->utils->serializeByGroup(${{ Entity['Name'] | lower }}, ['detailed'], false));
   }

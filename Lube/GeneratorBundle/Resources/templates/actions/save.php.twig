@@ -4,7 +4,12 @@
    * @Route(" ")
    * @Method({"POST"})
    * @ApiDoc(
-   *  description="Creates a {{ Entity['Name'] }}"
+   *  description="Crea un {{ Entity['Name'] }}"
+   *  section="{{ Entity['Name'] }}",
+   *  resource=true,
+   *  tags={
+   *    "a revisar: Dev" = "#5bc0de"
+   *  }
    * )
    */
   public function saveAction(Request $request)
@@ -20,7 +25,7 @@
 
         foreach ($errors as $error) 
         {
-          $errorMessages[] = (string)$error;
+            $errorMessages[$error->getProperty()] = $error->getViolation();
         }
 
         return new JsonResponse($errorMessages, 400);
@@ -33,7 +38,7 @@
     {
         foreach ($errors->getIterator() as $error) 
         {
-            $errorMessages[] = $error->getMessage();
+            $errorMessages[$error->getProperty()] = $error->getViolation();
         }
 
         return new JsonResponse($errorMessages, 400);
@@ -43,5 +48,5 @@
     $this->em->persist(${{ Entity['Name'] | lower}});
     $this->em->flush();
 
-    return new JsonResponse(json_decode($this->serializer->serialize(${{ Entity['Name'] | lower }}, 'json')));
+    return new JsonResponse($this->utils->serializeByGroup(${{ Entity['Name'] | lower }}, ['detailed'], false));
   }

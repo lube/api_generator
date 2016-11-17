@@ -1,0 +1,29 @@
+ /** 
+{% if Entity['Rol'] %}   * @PreAuthorize("hasRole('{{ Entity['Rol'] }}')")
+{% endif %}
+   * @Route("")
+   * @Method({"GET"})
+   * @ApiDoc(description="Devuelve una lista de {{ Entity['Name'] }}",
+   *  section="{{ Entity['Name'] }}",
+   *  resource=true,
+   *  parameters={
+   *      {"name"="offset", "dataType"="integer", "required"=false, "description"="Offset para paginacion"},
+   *      {"name"="limit", "dataType"="integer", "required"=false, "description"="Limit para paginacion"},
+   *  },
+   *  tags={
+   *    "a revisar: Dev" = "#5bc0de"
+   *  }
+   * )
+   */
+  public function cgetAction(Request $request) 
+  {
+      $offset = $request->query->get('offset',    null);
+      $limit  = $request->query->get('limit',     null);
+
+      ${{ Entity['Name'] | lower }}s  = $this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findBy([], [], $limit, $offset);
+
+      $Response['data']   = $this->utils->serializeByGroup(${{ Entity['Name'] | lower }}s, ['basic'], false);
+      $Response['total']  = count($this->em->getRepository('{{ Bundle['Name'] }}:{{ Entity['Name'] }}')->findAll());
+
+      return new JsonResponse($Response);
+  }
