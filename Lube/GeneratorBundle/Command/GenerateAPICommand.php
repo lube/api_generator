@@ -217,12 +217,13 @@ EOT
         $Entity['Rol']      =  $input->getOption('role');
         $Entity['Name']     =  $EntityName;
         $Entity['Metadata'] =  $EntityMetadata;
+        $Entity['Actions'] = [];
 
         if ($input->getOption('with-update')) {
             array_push($Entity['Actions'], 'save', 'remove', 'update');
         }
 
-        if ($input->getOption('with-simple-cget')) {
+        if (!$input->getOption('with-simple-cget')) {
             array_push($Entity['Actions'], 'cget_simple');
         } else {
             array_push($Entity['Actions'], 'cget');
