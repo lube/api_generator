@@ -126,10 +126,13 @@ EOT
         }
         else
         {
-            $question = new ConfirmationQuestion('Do you wish your cGet action to have filters and order? <info>[yes]</info> ', true);
+            $question = new ConfirmationQuestion('Do you wish your cGet action to be simpler (no filters or order)? <info>[yes]</info> ', true);
 
             $input->setOption('with-simple-cget', $helper->ask($input, $output, $question));
         }        
+
+        $summary[] = sprintf("Actions: %s", ($input->getOption('with-simple-cget') ? 'cGetSimple, Get' : 'cGet, Get'));
+        $summary[] = '';
 
         if ($input->hasArgument('with-update')) 
         {
@@ -142,7 +145,7 @@ EOT
             $input->setOption('with-update', $helper->ask($input, $output, $question));
         }
 
-        $summary[] = sprintf("Actions: %s", ($input->getOption('with-update') ? 'cGet, Get, Save, Remove, Update' : 'cGet, Get'));
+        $summary[] = sprintf("Actions: %s", ($input->getOption('with-update') ? 'Save, Remove, Update' : ''));
         $summary[] = '';
 
         //Rol
@@ -223,14 +226,14 @@ EOT
             array_push($Entity['Actions'], 'save', 'remove', 'update');
         }
 
-        if (!$input->getOption('with-simple-cget')) {
+        if ($input->getOption('with-simple-cget')) {
             array_push($Entity['Actions'], 'cget_simple');
         } else {
             array_push($Entity['Actions'], 'cget');
         }
         
         array_push($Entity['Actions'], 'get');
-        
+
         $this->renderFile('controller.php.twig', 
                            $BundlePath . '/Controller/' . $EntityName . 'Controller.php',
                            array('Namespace' => $input->getOption('bundle'),
