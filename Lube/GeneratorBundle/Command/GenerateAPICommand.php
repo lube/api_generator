@@ -203,16 +203,15 @@ EOT
         $runner = $this->getRunner($output, $errors);
 
         $Namespace = $this->container->get('doctrine')->getAliasNamespace($BundleName);
+        $BundlePath = $this->container->get('kernel')->locateResource('@' . $input->getOption('bundle'));
 
         $Namespace = implode('/',  
                                 array_slice(
-                                        explode('\\', $Namespace)
-                                        ,0
+                                        explode('/', $BundlePath)
+                                        ,-3
                                         ,-1
                                 )
                             );
-
-        $BundlePath = $this->container->get('kernel')->locateResource('@' . $input->getOption('bundle'));
 
         $Namespace          =  str_replace('/', '\\', $Namespace);
         $Bundle['Name']     =  $BundleName;
